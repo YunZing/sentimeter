@@ -10,7 +10,7 @@ require("./dbcon").connect();
 var index = 2;
 var count = 0;
 //sentiment analysis code
-//keyword∞° ∆˜«‘µ» doc array ∞°¡Æø¿±‚
+//keywordÍ∞Ä Ìè¨Ìï®Îêú doc array Í∞ÄÏ†∏Ïò§Í∏∞
 setInterval( function() {
     //qkdrnqjtjt tjdgus123
     //ryuenuse
@@ -24,21 +24,21 @@ setInterval( function() {
         if (docs == undefined || docs.length == 0) {
             return;
         }
-        //±€ «œ≥™∏∂¥Ÿ Ω««‡
+        //Í∏Ä ÌïòÎÇòÎßàÎã§ Ïã§Ìñâ
         docs.forEach(function (doc) {
             async.parallel({
-                //µø, ∏ÌªÁø° ¥Î«ÿº≠ ºˆ«‡
+                //Îèô, Î™ÖÏÇ¨Ïóê ÎåÄÌï¥ÏÑú ÏàòÌñâ
                 word: function (callback_second) {
                     var sent = 0;
                     var nv;
                     if (doc.Verb == null || doc.Verb == "[]") {
-                        callback_second(null, "æ¯¿Ω");
+                        callback_second(null, "ÏóÜÏùå");
                     } else {
                         nv = doc.Verb;
                         var Num = nv.length;
                         var Count = 0;
                         nv.forEach(function (word) {
-                            //µø,∏ÌªÁ∏¶ collectionø°º≠ ∞Àªˆ
+                            //Îèô,Î™ÖÏÇ¨Î•º collectionÏóêÏÑú Í≤ÄÏÉâ
                             model_senti.get_sentiment_by_word(word.word, function (err, sentiData) {
                                 if (err) {
                                     console.error(err);
@@ -46,7 +46,7 @@ setInterval( function() {
                                 async.waterfall([
                                     function (callback_third) {
                                         var isNeg = word.isNeg;
-                                        //µø.∏ÌªÁ æ¯¿ª ∞ÊøÏ apiø°º≠ ∞Àªˆ
+                                        //Îèô.Î™ÖÏÇ¨ ÏóÜÏùÑ Í≤ΩÏö∞ apiÏóêÏÑú Í≤ÄÏÉâ
                                         if (!sentiData[0]) {
                                             count++;
                                             model_senti.get_sentiment_from_api_and_save(api_key[index], word.word, function (err, apiSentiData) {
@@ -57,20 +57,20 @@ setInterval( function() {
                                                 callback_third(null, sentiData, isNeg);
                                             });
                                         }
-                                        //¿÷¿ª ∞ÊøÏ µ•¿Ã≈Õ ªÁøÎ
+                                        //ÏûàÏùÑ Í≤ΩÏö∞ Îç∞Ïù¥ÌÑ∞ ÏÇ¨Ïö©
                                         else {
                                             callback_third(null, sentiData, isNeg);
                                         }
                                     },
-                                    //«— wordø° ¥Î«— ±‡¡§, ∫Œ¡§ ∞·∞˙ ¥ı«œ±‚
+                                    //Ìïú wordÏóê ÎåÄÌïú Í∏çÏ†ï, Î∂ÄÏ†ï Í≤∞Í≥º ÎçîÌïòÍ∏∞
                                     function (sentiData, isNeg, callback_third) {
-                                        if (sentiData[0].sentiment == "±‡¡§" && isNeg == "false") {
+                                        if (sentiData[0].sentiment == "Í∏çÏ†ï" && isNeg == "false") {
                                             sent += 1;
-                                        } else if (sentiData[0].sentiment == "∫Œ¡§" && isNeg == "true") {
+                                        } else if (sentiData[0].sentiment == "Î∂ÄÏ†ï" && isNeg == "true") {
                                             sent += 1;
-                                        } else if (sentiData[0].sentiment == "±‡¡§" && isNeg == "true") {
+                                        } else if (sentiData[0].sentiment == "Í∏çÏ†ï" && isNeg == "true") {
                                             sent -= 1;
-                                        } else if (sentiData[0].sentiment == "∫Œ¡§" && isNeg == "false") {
+                                        } else if (sentiData[0].sentiment == "Î∂ÄÏ†ï" && isNeg == "false") {
                                             sent -= 1;
                                         } else {
                                             sent += 0;
@@ -82,11 +82,11 @@ setInterval( function() {
                                     if (Count == Num) {
                                         var sentiment;
                                         if (result > 0) {
-                                            sentiment = "±‡¡§";
+                                            sentiment = "Í∏çÏ†ï";
                                         } else if (result < 0) {
-                                            sentiment = "∫Œ¡§";
+                                            sentiment = "Î∂ÄÏ†ï";
                                         } else {
-                                            sentiment = "¡ﬂ∏≥";
+                                            sentiment = "Ï§ëÎ¶Ω";
                                         }
                                         callback_second(null, sentiment);
 
@@ -98,7 +98,7 @@ setInterval( function() {
                 }
             }, function (err, result) {
                 model_sns.update_sns_list_sentiment(result.word, doc._id, function (err) {
-                    console.log("update øœ∑·=========================================================")
+                    console.log("update ÏôÑÎ£å=========================================================")
                     console.log(doc.Text);
                     console.log(result.word);
                 })
