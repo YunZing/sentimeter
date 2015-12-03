@@ -15,9 +15,10 @@ setInterval( function() {
     //qkdrnqjtjt tjdgus123
     //ryuenuse
     //breaksung a123dc
-    var api_key = ["qkdrnqjtjt20151014201843", "ryuenuse20151016185510", "breaksung20151203205351"];
-    if(count > 400) {
-        index = (index + 1) % 3;
+    //castlebin12 zoqtmxhs12
+    var api_key = ["qkdrnqjtjt20151014201843", "ryuenuse20151016185510", "breaksung20151203205351", "castlebin1220151203231034"];
+    if(count > 300) {
+        index = (index + 1) % 4;
         count = 0;
     }
     model_sns.get_sns_list(function (err, docs) {
