@@ -6,8 +6,8 @@ var request = require('sync-request');
 var dbcon = require("../dbcon");
 var urlencode = require('urlencode');
 
-//sentimentFactory¿¡¼­ »ç¿ë
-//db¿¡ sentimentÁ¤º¸°¡ ÀÖ´ÂÁö È®ÀÎ
+//sentimentFactoryì—ì„œ ì‚¬ìš©
+//dbì— sentimentì •ë³´ê°€ ìˆëŠ”ì§€ í™•ì¸
 exports.get_sentiment_by_word = function (word, callback) {
     var db = dbcon.getDb();
 
@@ -17,10 +17,10 @@ exports.get_sentiment_by_word = function (word, callback) {
         });
 }
 
-//sentimentFactory¿¡¼­ »ç¿ë
-//sentimentÁ¤º¸¸¦ °¡Á®¿À±â À§ÇØ requestÀü¼Û
-//response¿¡ µ¥ÀÌÅÍ°¡ ¾øÀ»°æ¿ì sentiment¿¡ ¾øÀ½
-//µ¥ÀÌÅÍ°¡ ÀÖÀ»°æ¿ì Á¤º¸ ±×´ë·Î ÀúÀå
+//sentimentFactoryì—ì„œ ì‚¬ìš©
+//sentimentì •ë³´ë¥¼ ê°€ì ¸ì˜¤ê¸° ìœ„í•´ requestì „ì†¡
+//responseì— ë°ì´í„°ê°€ ì—†ì„ê²½ìš° sentimentì— ì—†ìŒ
+//ë°ì´í„°ê°€ ìˆì„ê²½ìš° ì •ë³´ ê·¸ëŒ€ë¡œ ì €ì¥
 exports.get_sentiment_from_api_and_save = function (api_key, word, callback) {
     var db = dbcon.getDb();
 
@@ -32,9 +32,9 @@ exports.get_sentiment_from_api_and_save = function (api_key, word, callback) {
         return callback(new Error("body is undefined"));
     }
     if (body.trim() === "") {
-        console.log(word + "µ¥ÀÌÅÍ ¾øÀ»°æ¿ì");
+        console.log(word + "ë°ì´í„° ì—†ì„ê²½ìš°");
         console.log(body);
-        //trim()Àº bodyÀÇ ¾ÕµÚ °ø¹éÀ» ¸ğµÎ Á¦°Å;
+        //trim()ì€ bodyì˜ ì•ë’¤ ê³µë°±ì„ ëª¨ë‘ ì œê±°;
         /*return callback(new Error("no data"));*/
         db.collection('sentiment').updateOne(
             {"word": word},
@@ -42,14 +42,14 @@ exports.get_sentiment_from_api_and_save = function (api_key, word, callback) {
                 $set: {
                     "word": word,
                     "type": "noType",
-                    "sentiment": "¾øÀ½",
+                    "sentiment": "ì—†ìŒ",
                     "sentiment_score": "0%"
                 }
             }, {upsert: true},
             function (err, result) {
                 var apiSentiData = new Array({});
                 apiSentiData[0].word = word;
-                apiSentiData[0].sentiment = "¾øÀ½";
+                apiSentiData[0].sentiment = "ì—†ìŒ";
                 apiSentiData[0].sentiment_score = "0%";
 
                 callback(undefined, apiSentiData, result);
@@ -58,7 +58,7 @@ exports.get_sentiment_from_api_and_save = function (api_key, word, callback) {
     }
     else {
         var jsonbody = JSON.parse(body);
-        console.log("µ¥ÀÌÅÍ ÀÖÀ»°æ¿ì");
+        console.log("ë°ì´í„° ìˆì„ê²½ìš°");
         console.log(jsonbody);
         if (jsonbody.error == undefined) {
             db.collection('sentiment').insertOne({
@@ -77,7 +77,7 @@ exports.get_sentiment_from_api_and_save = function (api_key, word, callback) {
                 });
         }
         else {
-            console.log("µ¥ÀÌÅÍ »ç¿ë ÃÊ°ú" + word);
+            console.log("ë°ì´í„° ì‚¬ìš© ì´ˆê³¼" + word);
         }
     }
 }

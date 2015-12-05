@@ -17,7 +17,7 @@ setInterval( function() {
     //breaksung a123dc
     //castlebin12 zoqtmxhs12
     var api_key = ["qkdrnqjtjt20151014201843", "ryuenuse20151016185510", "breaksung20151203205351", "castlebin1220151203231034"];
-    if(count > 300) {
+    if(count > 980) {
         index = (index + 1) % 4;
         count = 0;
     }
@@ -102,6 +102,7 @@ setInterval( function() {
                     console.log("update 완료=========================================================")
                     console.log(doc.Text);
                     console.log(result.word);
+                    console.log(count);
                 })
             })
         })

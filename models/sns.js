@@ -5,8 +5,8 @@ var ObjectId = require('mongodb').ObjectId;
 var dbcon = require("../dbcon");
 
 
-//controller¿¡¼­ »ç¿ë
-//Noun¿¡ word°¡ Æ÷ÇÔµÇ°í, °¨Á¤ ºĞ¼®À» ³¡³½(sentiment°¡ nullÀÌ ¾Æ´Ñ) snsData¸¸ Àü¼Û
+//controllerì—ì„œ ì‚¬ìš©
+//Nounì— wordê°€ í¬í•¨ë˜ê³ , ê°ì • ë¶„ì„ì„ ëë‚¸(sentimentê°€ nullì´ ì•„ë‹Œ) snsDataë§Œ ì „ì†¡
 exports.get_sns_list_by_word = function (word, callback) {
     var db = dbcon.getDb();
     if(word == undefined || word == "") {
@@ -24,8 +24,8 @@ exports.get_sns_list_by_word = function (word, callback) {
     }
 };
 
-//sentimentFactory¿¡¼­ »ç¿ë
-//sentiment°¡ nullÀÎ snsData(¾ÆÁ÷ °¨¼ººĞ¼®À» ÇÏÁö ¾ÊÀº µ¥ÀÌÅÍ)¸¸ Àü¼Û
+//sentimentFactoryì—ì„œ ì‚¬ìš©
+//sentimentê°€ nullì¸ snsData(ì•„ì§ ê°ì„±ë¶„ì„ì„ í•˜ì§€ ì•Šì€ ë°ì´í„°)ë§Œ ì „ì†¡
 exports.get_sns_list = function (callback) {
     var db = dbcon.getDb();
     db.collection('SNS_Data').find({"sentiment" : null}).toArray(
@@ -35,8 +35,8 @@ exports.get_sns_list = function (callback) {
 };
 
 
-//sentimentFactory¿¡¼­ »ç¿ë
-//°¨¼ººĞ¼®À» ÇÏ°í ÇØ´ç sentiment Á¤º¸¸¦ ÀúÀå
+//sentimentFactoryì—ì„œ ì‚¬ìš©
+//ê°ì„±ë¶„ì„ì„ í•˜ê³  í•´ë‹¹ sentiment ì •ë³´ë¥¼ ì €ì¥
 exports.update_sns_list_sentiment = function (sentiment, _id, callback) {
     var db = dbcon.getDb();
     db.collection('SNS_Data').updateOne(
