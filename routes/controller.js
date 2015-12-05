@@ -26,24 +26,92 @@ router.get('/view', function (req, res, next) {
 
 router.get('/result/chart', function (req, res, next) {
     /*
-        req: keyword
-        res: {
-            [
-                "Date":
-                "positive":
-                "negative":
-                "neutral":
-            ],
-            ...
-        }
+     req: keyword
+     res: {
+     [
+     "keyword":
+     "date":
+     "positive":
+     "negative":
+     "neutral":
+     ],
+     ...
+     }
      */
-    var name = req.query.keyword;
-
+    var keyword = req.query.keyword;
+    var today = new Date();
+    console.log(today);
+    async.parallel([
+            function(callback) {
+                getSentimentResults(keyword, convertDateToString(today), function(result) {
+                    console.log(convertDateToString(result.date));
+                    callback(null, result);
+                });
+            },
+            function(callback) {
+                var date = new Date(today.valueOf() - (24*60*60*1000));
+                getSentimentResults(keyword, convertDateToString(date), function(result) {
+                    callback(null, result);
+                });
+            },
+            function(callback) {
+                var date = new Date(today.valueOf() - 2*(24*60*60*1000));
+                getSentimentResults(keyword, convertDateToString(date), function(result) {
+                    callback(null, result);
+                });
+            },
+            function(callback) {
+                var date = new Date(today.valueOf() - 3*(24*60*60*1000));
+                getSentimentResults(keyword, convertDateToString(date), function(result) {
+                    callback(null, result);
+                });
+            },
+            function(callback) {
+                var date = new Date(today.valueOf() - 4*(24*60*60*1000));
+                getSentimentResults(keyword, convertDateToString(date), function(result) {
+                    callback(null, result);
+                });
+            },
+            function(callback) {
+                var date = new Date(today.valueOf() - 5*(24*60*60*1000));
+                getSentimentResults(keyword, convertDateToString(date), function(result) {
+                    callback(null, result);
+                });
+            },
+            function(callback) {
+                var date = new Date(today.valueOf() - 6*(24*60*60*1000));
+                getSentimentResults(keyword, convertDateToString(date), function(result) {
+                    callback(null, result);
+                });
+            }
+        ],
+        function(err, results){
+            var result=[];
+            result.push(results[0]);
+            result.push(results[1]);
+            result.push(results[2]);
+            result.push(results[3]);
+            result.push(results[4]);
+            result.push(results[5]);
+            result.push(results[6]);
+            res.send(result);
+        });
+    //var yesterday = new Date(today.valueOf() - 7*(24*60*60*1000));
 });
 
 
-//게시글에서 단어 수 세
+//게시글에서 단어 수 세기
 router.get('/result/wordCount', function (req, res, next) {
+    /*
+     req: keyword
+     res: [
+     {
+     "word": 동사 단어
+     "count": 단어 나온 횟수
+     },
+     ...
+     ]
+     */
     var keyword = req.query.keyword;
     var wordObject = new Object();
     var docNum = 0;
@@ -112,6 +180,31 @@ router.get('/result/wordCount', function (req, res, next) {
 
 //name -> SNS db 전체 게시글
 router.get('/result/sentimentBar', function (req, res, next) {
+    /*
+     req: keyword
+     res: {
+     "keyword":
+     "totalCount": 감정이있는 글 갯수
+     "positiveCount": 긍정 글 갯수
+     "negativeCount": 부정 글 갯수
+     "neutralCount": 중립 글 갯수
+     "positive": 긍정 퍼센트
+     "negative": 부정 퍼센트
+     "neutral": 중립 퍼센트
+     "text": {
+     positiveText:[
+     {
+     "Id": screenName
+     "Text": 내용
+     "URL": 주소
+     "sentiment": 감정
+     },
+     ...
+     ],
+     negativeText:[ 위와같음... ],
+     neutralText:[ 위와같음... ]
+     }
+     */
     var keyword = req.query.keyword;
     async.waterfall([
         //keyword가 포함된 doc array 가져오기
@@ -149,7 +242,6 @@ router.get('/result/sentimentBar', function (req, res, next) {
                             var textJson = {};
                             textJson.Id = doc.Name;
                             textJson.Text = doc.Text;
-                            textJson.v  =doc.Verb;
                             textJson.URL = "https://twitter.com/" + doc.ScreenName + "/status/" + doc.StatusId;
                             textJson.sentiment = doc.sentiment;
                             if (doc.sentiment == "긍정") {
@@ -188,5 +280,70 @@ router.get('/result/sentimentBar', function (req, res, next) {
         res.json(result);
     });
 });
+
+
+function convertDateToString(date) {
+    var dd = date.getDate();
+    var mm = date.getMonth()+1; //January is 0!
+    var yyyy = date.getFullYear();
+    if(dd<10) {
+        dd='0'+dd
+    }
+    if(mm<10) {
+        mm='0'+mm
+    }
+    dd=dd.toString();
+    mm=mm.toString();
+    yyyy=yyyy.toString();
+    var result = yyyy+mm+dd;
+    return result;
+}
+
+function convertStringToDate(str) {
+    if(!/^(\d){8}$/.test(str)) return "invalid date";
+    var yyyy = str.substr(0,4) ;
+    var mm = str.substr(4,2)-1;
+    var dd = str.substr(6,2);
+    return new Date(yyyy,mm,dd);
+}
+
+var getSentimentResults = function(keyword, dateStr, callback) {
+    var date = convertStringToDate(dateStr);
+    var docNum = 0;
+    var docCount = 0;
+    var result={
+        keyword: keyword,
+        date: date,
+        positive: 0,
+        negative: 0,
+        neutral: 0
+    };
+    model_sns.get_sns_list_by_word_and_date(keyword, dateStr, function (err, docs) {
+        if (err) {
+            console.log(err);
+        }
+        if (docs == null || docs.length == 0) {
+            console.log(result);
+            callback(result);
+        }
+        else {
+            docNum = docs.length;
+            docs.forEach(function (doc) {
+                docCount++;
+                if (doc.sentiment == "긍정") {
+                    result.positive++;
+                } else if (doc.sentiment == "부정") {
+                    result.negative++;
+                } else if (doc.sentiment == "중립") {
+                    result.neutral++;
+                }
+                if(docNum == docCount){
+                    console.log(result);
+                    callback(result);
+                }
+            });
+        }
+    });
+}
 
 module.exports = router;

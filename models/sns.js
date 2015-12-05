@@ -24,6 +24,18 @@ exports.get_sns_list_by_word = function (word, callback) {
     }
 };
 
+
+//controller에서 사용
+//Noun에 word가 포함되고, 감정 분석을 끝낸(sentiment가 null이 아닌) snsData만 전송
+exports.get_sns_list_by_word_and_date = function (word, strdate, callback) {
+    var db = dbcon.getDb();
+    db.collection('SNS_Data').find({"Text":{$regex : ".*"+word+".*", $not : /^RT @/}, "Time":{$regex: ".*"+strdate} , "sentiment":{"$ne" : null}}, {}).toArray(
+        function (err, docs) {
+            callback(err, docs);
+        });
+};
+
+
 //sentimentFactory에서 사용
 //sentiment가 null인 snsData(아직 감성분석을 하지 않은 데이터)만 전송
 exports.get_sns_list = function (callback) {
