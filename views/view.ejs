@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="bower_components/Nwagon/Nwagon.css" type="text/css">
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/Nwagon/Nwagon.js"></script>
+</head>
+<body>
+<!--FFDC74-->
+<div class="vw-container" ng-app="home" ng-controller="changeScreen">
+    <div class="vw-container-header">
+        <div class="well well-lg vw-container-header-well">
+            hello
+        </div>
+    </div>
+    <div class="vw-container-sentimentBar">
+        <h4><span class="glyphicon glyphicon-ok"></span> 감정분석결과</h4>
+        <div class="progress progress-striped">
+            <div class="progress-bar progress-bar-positive progress-bar-striped" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+            </div>
+            <div class="progress-bar progress-bar-neutral progress-bar-striped" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 20%;">
+            </div>
+            <div class="progress-bar progress-bar-negative progress-bar-striped" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 20%;">
+            </div>
+        </div>
+    </div>
+    <div class="vw-container-analysis">
+        <div class="vw-container-analysis-chart">
+            <h4><span class="glyphicon glyphicon-stats"></span> 일주일 분포</h4>
+            <div id="chart18"></div>
+        </div>
+        <div class="vw-container-analysis-word">
+            <h4><span class="glyphicon glyphicon-menu-hamburger"></span> 단어</h4>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>단어</th>
+                    <th>횟수</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>사랑하다</td>
+                    <td>100</td>
+                </tr>
+                <tr>
+                    <td>좋다</td>
+                    <td>57</td>
+                </tr>
+                <tr>
+                    <td>자다</td>
+                    <td>30</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="vw-container-sns">
+        <h4><span class="glyphicon glyphicon-search"></span> 게시글</h4>
+        <ul class="nav nav-pills">
+            <li class="active"><a data-toggle="pill" href="#home">All</a></li>
+            <li><a data-toggle="pill" href="#menu1">긍정</a></li>
+            <li><a data-toggle="pill" href="#menu2">중립</a></li>
+            <li><a data-toggle="pill" href="#menu3">부정</a></li>
+        </ul>
+        <ul class="list-group">
+            <li class="list-group-item">
+                @Eunamong
+                <br>
+                안녕
+            </li>
+            <li class="list-group-item">Second item</li>
+            <li class="list-group-item">Third item</li>
+        </ul>
+    </div>
+</div>
+<script>
+    var options = {
+        'legend':{
+            names: ['08-12', '08-19', '08-26', '09-02', '09-09', '09-16', '09-25'],
+            hrefs: []
+        },
+        'dataset':{
+            title:'Playing time per day',
+            values: [[5,7,2], [2,5,7], [7,2,3], [6,1,5], [5,3,8], [8,3,1], [6,3,9]],
+            colorset: ['#82DCF8', '#C6C6C6', "#FE9289"],
+            fields:['긍정', '중립', '부정']
+        },
+        'chartDiv' : 'chart18',
+        'chartType' : 'multi_column',
+        'chartSize' : {width:640, height:320},
+        'maxValue' : 10,
+        'increment' : 1
+    };
+
+    Nwagon.chart(options);
+
+</script>
+</body>
+</html>

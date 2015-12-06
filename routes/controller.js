@@ -17,9 +17,7 @@ router.get('/home', function (req, res, next) {
 router.get('/view', function (req, res, next) {
     var keyword = req.query.keyword;
     console.log(keyword);
-    if (keyword === undefined) {
-        res.render('home', {title: 'Express'});
-    } else {
+    if (keyword !== undefined) {
         res.render('view', {key: keyword});
     }
 });

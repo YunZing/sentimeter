@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <script src="bower_components/angular/angular.min.js"></script>
+</head>
+<body>
+<!--FFDC74-->
+<div class="hm-container" ng-app="home" ng-controller="changeScreen">
+    <div class="hm-container-logo">
+
+    </div>
+    <div class="hm-container-search">
+        <div class="input-group">
+            <input type="text" class="form-control" ng-model="keyword" ng-keyup="$event.keyCode == 13 && toggle()" placeholder="리뷰주제를 입력하세용" placeholder="키워드를 입력하세요" style="border:4px solid #FFBE40" >
+            <div class="input-group-btn">
+                <button type="submit" class="btn btn-warning" ng-click="toggle()"><span class="glyphicon glyphicon-search"></span></button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var app = angular.module("home", []);
+    app.controller('changeScreen', function($scope) {
+        $scope.toggle = function() {
+            location.href = "http://localhost:3000/view?keyword=" + $scope.keyword;
+        }
+    })
+</script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="javascripts/module.js"></script>
+<script src="javascripts/controller.js"></script>
+</body>
+</html>

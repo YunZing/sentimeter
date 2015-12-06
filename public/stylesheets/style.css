@@ -1,8 +1,107 @@
+/* http://www.colourlovers.com/palette/1411751/Gowalla_Warm
+ F17233 F5A54A F8C34C FBD959 BCDE5C
+ */
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  margin:0;
+  padding:0;
 }
 
-a {
-  color: #00B7FF;
+.hm-container {
+  overflow: auto;
+  height: 400px;
+  width: 500px;
+  margin: 0px auto;
+  margin-top: 250px;
+}
+
+.hm-container-logo {
+  width: 100%;
+  height: 330px;
+  background-color: #FFBE40;
+}
+
+.hm-container-search {
+  margin-top: 20px;
+  height: 50px;
+}
+
+.vw-container {
+  width: 940px;
+  margin: 0px auto;
+  margin-top: 40px;
+}
+
+.vw-container-header {
+  width: 100%;
+  height: 200px;
+}
+.vw-container-header-well {
+  height: 200px;
+  background: #FFBE40;
+  border: 0px;
+}
+
+.vw-container-sentimentBar {
+  height: 90px;
+  width: 100%;
+  margin-top: 50px;
+}
+
+.progress {
+  background: rgba(245, 245, 245, 1);
+  border: 0px solid rgba(245, 245, 245, 1);
+  border-radius: 40px;
+  height: 75px;
+}
+
+.progress-bar-positive {
+  background: #82DCF8;
+}
+
+.progress-bar-neutral {
+  background: #C6C6C6;
+}
+
+.progress-bar-negative {
+  background: #FE9289;
+}
+
+
+.vw-container-analysis {
+
+  height: 350px;
+  width: 100%;
+  margin-top: 60px;
+}
+
+.vw-container-analysis-chart {
+  height: 350px;
+  width: 64%;
+  float:left;
+}
+.vw-container-analysis-word {
+  padding-left:30px;
+  padding-right:30px;
+  height: 350px;
+  width: 34%;
+  float:right;
+}
+
+.table-striped > tbody > tr:nth-child(2n+1) > td,
+.table-striped > tbody > tr:nth-child(2n+1) > th {
+  background-color: #FFBE40;
+}
+
+.table td {
+  text-align: center;
+}
+.table th {
+  text-align: center;
+}
+
+
+.vw-container-sns {
+  height: 600px;
+  width: 100%;
+  margin-top: 20px;
 }
