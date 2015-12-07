@@ -11,12 +11,12 @@ body {
   height: 400px;
   width: 500px;
   margin: 0px auto;
-  margin-top: 150px;
+  margin-top: 200px;
 }
 
 .hm-container-logo {
   width: 100%;
-  height: 330px;
+  height: 100px;
 }
 
 .hm-container-search {
