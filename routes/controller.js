@@ -120,7 +120,11 @@ router.get('/result/chart', function (req, res, next) {
                 options.dataset.values.push(arr);
 
                 if(count==num) {
+                    if(max<11)
+                        max = 10;
+
                     options.maxValue = max;
+
                     res.json(options);
                 }
 
@@ -199,26 +203,27 @@ router.get('/result/wordCount', function (req, res, next) {
                             var sentiment;
                             var styleScope;
                             var sentimentScore = (parseFloat((sentiData[0].sentiment_score).split("%")[0])/100).toFixed(2);
-                            if(sentiData[0].sentiment == "긍정") {
-                                sentiment = "positive";
-                                styleScope = "background: rgba(130, 220, 248, " + sentimentScore + ");";
+                            if(!(sentiData[0].sentiment == "중립" && sentimentScore <= 0.5)) {
+                                if (sentiData[0].sentiment == "긍정") {
+                                    sentiment = "positive";
+                                    styleScope = "background: rgba(130, 220, 248, " + sentimentScore + ");";
+                                }
+                                if (sentiData[0].sentiment == "중립") {
+                                    sentiment = "neutral";
+                                    styleScope = "background: rgba(198, 198, 198, " + sentimentScore + ");";
+                                }
+                                if (sentiData[0].sentiment == "부정") {
+                                    sentiment = "negative";
+                                    styleScope = "background: rgba(254, 146, 137, " + sentimentScore + ");";
+                                }
+                                arr.push({
+                                    "word": sentiData[0].word,
+                                    "count": wordObject[sentiData[0].word],
+                                    "sentiment": sentiment,
+                                    "sentiment_score": sentimentScore,
+                                    "style": styleScope
+                                });
                             }
-                            if(sentiData[0].sentiment == "중립"){
-                                sentiment = "neutral";
-                                styleScope = "background: rgba(198, 198, 198, " + sentimentScore + ");";
-                            }
-                            if(sentiData[0].sentiment == "부정"){
-                                sentiment = "negative";
-                                styleScope = "background: rgba(254, 146, 137, " + sentimentScore + ");";
-                            }
-
-                            arr.push({
-                                "word": sentiData[0].word,
-                                "count": wordObject[sentiData[0].word],
-                                "sentiment": sentiment,
-                                "sentiment_score": sentimentScore,
-                                "style": styleScope
-                            });
                         }
                         if(num == count) {
                             arr.sort(function (a, b) {

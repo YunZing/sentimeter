@@ -17,7 +17,7 @@ exports.get_sns_list_by_word = function (word, callback) {
     }
     else {
         //{$regex : ".*"+word+".*", $not : /^RT @/}
-        db.collection('SNS_Data').find({"Text":{$regex : ".*"+word+".*", $not : /^RT @/}, "sentiment":{"$ne" : null}}, {}).toArray(
+        db.collection('SNS_Data').find({"Text":{$regex : ".*"+word+".*", $not : /^RT @/}, "sentiment":{"$ne" : null}}, {}).sort({"Time":-1}).toArray(
             function (err, docs) {
                 callback(err, docs);
             });
