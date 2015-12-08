@@ -30,10 +30,7 @@ body {
   margin-top: 40px;
 }
 
-.vw-container-header {
-  width: 100%;
-  height: 90px;
-}
+
 
 
 .vw-container-header-well {
@@ -46,28 +43,53 @@ body {
   color: #F17233;
 }
 
+.vw-container-header-error-well {
+  height: 70px;
+  margin-left:30px;
+  margin-right:30px;
+  margin-top: 10px;
+  background: #f2dede;
+  border: 0px;
+  /*f2dede */
+  color: #a94442;
+}
+
+.vw-container-header {
+  width: 100%;
+  height: 120px;
+}
+
+.vw-container-header-keyword {
+  height: 30px;
+  margin-left:30px;
+  margin-right:30px;
+  border: 0px;
+  /*f2dede */
+  /*color: #72848B;*/
+}
+
 .vw-container-sentimentBar {
   height: 90px;
   width: 100%;
   margin-top: 50px;
 }
 
-.progress {
-  background: rgba(245, 245, 245, 1);
-  border: 0px solid rgba(245, 245, 245, 1);
-  border-radius: 40px;
-  height: 75px;
-}
+/*.progress {*/
+  /*background: rgba(245, 245, 245, 1);*/
+  /*border: 0px solid rgba(245, 245, 245, 1);*/
+  /*border-radius: 40px;*/
+  /*height: 75px;*/
+/*}*/
 
-.progress span {
-  width: 100%;
-  color: black;
-  font-size: 16px;
-}
+/*.progress span {*/
+  /*width: 100%;*/
+  /*color: black;*/
+  /*font-size: 16px;*/
+/*}*/
 
-.progress-bar {
-  line-height: 75px;
-}
+/*.progress-bar {*/
+  /*line-height: 75px;*/
+/*}*/
 
 .progress-bar-positive {
   background: #82DCF8;
@@ -93,6 +115,7 @@ body {
   height: 350px;
   width: 64%;
   float:left;
+  background-color:#BCDE5C;
 }
 .vw-container-analysis-word {
   padding-left:30px;
@@ -124,4 +147,8 @@ body {
 .nav-pills > li.active > a:focus {
   color:black;
   background: #FBD959;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
 }

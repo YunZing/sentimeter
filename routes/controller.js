@@ -4,6 +4,7 @@
 var express = require('express');
 var model_sns = require('../models/sns.js');
 var model_senti = require('../models/sentiment.js');
+var model_search = require('../models/searchlog.js');
 var http = require('http');
 var urlencode = require('urlencode');
 var async = require('async');
@@ -16,11 +17,20 @@ router.get('/home', function (req, res, next) {
 
 router.get('/view', function (req, res, next) {
     var keyword = req.query.keyword;
-    console.log(keyword);
     if (keyword !== undefined) {
-        res.render('view', {key: keyword});
+        res.render('pt', {key: keyword});
     }
 });
+
+
+router.get('/result/search', function (req, res, next) {
+    model_search.get_search(function(err, docs) {
+        if(err)
+            console.log(err);
+        res.json(docs);
+    });
+});
+
 
 router.get('/result/chart', function (req, res, next) {
     /*
@@ -194,7 +204,6 @@ router.get('/result/wordCount', function (req, res, next) {
             var num = Object.keys(result[0]).length;
             console.log(num);
             for (var prop in result[0]) {
-                console.log(prop);
                 if (wordObject.hasOwnProperty(prop)) {
                     model_senti.get_sentiment_by_word(prop, function(err, sentiData) {
                         count++;
@@ -347,7 +356,12 @@ router.get('/result/sentimentBar', function (req, res, next) {
         result.positive = (result.positiveCount * 100 / (result.positiveCount + result.negativeCount + result.neutralCount)).toFixed(2);
         result.negative = (result.negativeCount * 100 / (result.positiveCount + result.negativeCount + result.neutralCount)).toFixed(2);
         result.neutral = (100-result.positive-result.negative).toFixed(2);
-
+        if(result.totalCount != 0) {
+            model_search.set_log_by_word(keyword, function(err, result) {
+                if(err)
+                    console.log(err);
+            });
+        }
         res.json(result);
     });
 });

@@ -8,7 +8,7 @@
 </head>
 <body>
 <!--FFDC74-->
-<div class="hm-container" ng-app="home" ng-controller="changeScreen">
+<div class="hm-container" ng-app="home" ng-controller="home">
     <div class="hm-container-logo">
         <img src="image/logo.png" width="500">
     </div>
@@ -20,13 +20,27 @@
             </div>
         </div>
     </div>
+    <!--<div>-->
+        <!--<h4 style="color:#72848B">많이 검색한 키워드:-->
+            <!--<small ng-repeat="keyword in model.search">-->
+                <!--<a href="{{keyword.url}}" style="font-size:12px; padding-left:1em; color:#696969">{{keyword.word}}</a>-->
+            <!--</small>-->
+        <!--</h4>-->
+    <!--</div>-->
 </div>
 <script>
     var app = angular.module("home", []);
-    app.controller('changeScreen', function($scope) {
+    app.controller('home', function($scope, $http, $filter) {
+        $scope.model = {};
+
+        $http.get("http://localhost:3000/result/search").success(function (data){
+            $scope.model.search = $filter("limitTo")(data.splice(0), 8);
+        });
+
         $scope.toggle = function() {
             location.href = "http://localhost:3000/view?keyword=" + $scope.keyword;
         }
+
     })
 </script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
