@@ -18,16 +18,18 @@ router.get('/home', function (req, res, next) {
 router.get('/view', function (req, res, next) {
     var keyword = req.query.keyword;
     if (keyword !== undefined) {
-        res.render('pt', {key: keyword});
+        res.render('view', {key: keyword});
     }
 });
 
-
 router.get('/result/search', function (req, res, next) {
-    model_search.get_search(function(err, docs) {
-        if(err)
+    var now = new Date();
+    var condition = new Date(now.valueOf() - (3*60*60*1000));
+    model_search.get_log(condition, function(err, docs) {
+        if(err) {
             console.log(err);
-        res.json(docs);
+        }
+        res.send(docs);
     });
 });
 
@@ -48,7 +50,6 @@ router.get('/result/chart', function (req, res, next) {
      */
     var keyword = req.query.keyword;
     var today = new Date();
-    console.log(today);
     async.parallel([
             function(callback) {
                 var date = new Date(today.valueOf() - 6*(24*60*60*1000));
@@ -88,7 +89,6 @@ router.get('/result/chart', function (req, res, next) {
             },
             function(callback) {
                 getSentimentResults(keyword, convertDateToString(today), function(result) {
-                    console.log(convertDateToString(result.date));
                     callback(null, result);
                 });
             }
@@ -162,8 +162,8 @@ router.get('/result/wordCount', function (req, res, next) {
 
     //keyword가 포함된 doc array가져오기
     model_sns.get_sns_list_by_word(keyword, function (err, docs) {
-        if(docs == "[]" || docs == null || docs == undefined) {
-            res.send("");
+        if(docs.length==0 || docs == "[]" || docs == null || docs == undefined) {
+            res.send("[]");
         }
         docNum = docs.length;
         //doc
@@ -202,45 +202,46 @@ router.get('/result/wordCount', function (req, res, next) {
             var arr = [];
             var count = 0;
             var num = Object.keys(result[0]).length;
-            console.log(num);
             for (var prop in result[0]) {
                 if (wordObject.hasOwnProperty(prop)) {
                     model_senti.get_sentiment_by_word(prop, function(err, sentiData) {
                         count++;
-                        if(sentiData[0].sentiment == "긍정" || sentiData[0].sentiment == "부정" ||
-                            (sentiData[0].sentiment == "중립" && sentiData[0].sentiment_score != "0%")) {
-                            var sentiment;
-                            var styleScope;
-                            var sentimentScore = (parseFloat((sentiData[0].sentiment_score).split("%")[0])/100).toFixed(2);
-                            if(!(sentiData[0].sentiment == "중립" && sentimentScore <= 0.5)) {
-                                if (sentiData[0].sentiment == "긍정") {
-                                    sentiment = "positive";
-                                    styleScope = "background: rgba(130, 220, 248, " + sentimentScore + ");";
+                        if(!(sentiData[0] == "[]" || sentiData[0] == null || sentiData[0] == undefined)) {
+                            if (sentiData[0].sentiment == "긍정" || sentiData[0].sentiment == "부정" ||
+                                (sentiData[0].sentiment == "중립" && sentiData[0].sentiment_score != "0%")) {
+                                var sentiment;
+                                var styleScope;
+                                var sentimentScore = (parseFloat((sentiData[0].sentiment_score).split("%")[0]) / 100).toFixed(2);
+                                if (!(sentiData[0].sentiment == "중립" && sentimentScore <= 0.5)) {
+                                    if (sentiData[0].sentiment == "긍정") {
+                                        sentiment = "positive";
+                                        styleScope = "background: rgba(130, 220, 248, " + sentimentScore + ");";
+                                    }
+                                    if (sentiData[0].sentiment == "중립") {
+                                        sentiment = "neutral";
+                                        styleScope = "background: rgba(198, 198, 198, " + sentimentScore + ");";
+                                    }
+                                    if (sentiData[0].sentiment == "부정") {
+                                        sentiment = "negative";
+                                        styleScope = "background: rgba(254, 146, 137, " + sentimentScore + ");";
+                                    }
+                                    arr.push({
+                                        "word": sentiData[0].word,
+                                        "count": wordObject[sentiData[0].word],
+                                        "sentiment": sentiment,
+                                        "sentiment_score": sentimentScore,
+                                        "style": styleScope
+                                    });
                                 }
-                                if (sentiData[0].sentiment == "중립") {
-                                    sentiment = "neutral";
-                                    styleScope = "background: rgba(198, 198, 198, " + sentimentScore + ");";
-                                }
-                                if (sentiData[0].sentiment == "부정") {
-                                    sentiment = "negative";
-                                    styleScope = "background: rgba(254, 146, 137, " + sentimentScore + ");";
-                                }
-                                arr.push({
-                                    "word": sentiData[0].word,
-                                    "count": wordObject[sentiData[0].word],
-                                    "sentiment": sentiment,
-                                    "sentiment_score": sentimentScore,
-                                    "style": styleScope
+                            }
+                            if (num == count) {
+                                arr.sort(function (a, b) {
+                                    return b.count - a.count;
                                 });
+                                res.send(arr);
                             }
                         }
-                        if(num == count) {
-                            arr.sort(function (a, b) {
-                                return b.count - a.count;
-                            });
-                            res.send(arr);
-                        }
-                    })
+                    });
                 }
             }
         });
@@ -390,7 +391,6 @@ function convertStringToDateView(str) {
     var hh = str.substr(8,2);
     var min = str.substr(10,2);
     var result = mm+'/'+dd+' '+hh+':'+min;
-    console.log(result);
     return result;
 }
 

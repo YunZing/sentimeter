@@ -1,17 +1,30 @@
 /* http://www.colourlovers.com/palette/1411751/Gowalla_Warm
  F17233 F5A54A F8C34C FBD959 BCDE5C
  */
-body {
-  margin:0;
-  padding:0;
+html,body{
+  height:100%
 }
+body{
+  display:table;
+  width:100%;
+}
+#header,#footer{
+  display:table-row;
+  width:100%;
+  height:1px;
+}
+#container{
+  display:table-row;
+  width:100%;
+  height:100%;
+}
+
+
+/*============================home 관련 style*/
 
 .hm-container {
   overflow: auto;
-  height: 400px;
-  width: 500px;
-  margin: 0px auto;
-  margin-top: 200px;
+
 }
 
 .hm-container-logo {
@@ -23,15 +36,12 @@ body {
   margin-top: 20px;
   height: 50px;
 }
-
-.vw-container {
-  width: 940px;
-  margin: 0px auto;
-  margin-top: 40px;
+.searchBox {
+  width: 500px;
+  margin: 0 auto;
 }
 
-
-
+/*============================navbar well 관련 style*/
 
 .vw-container-header-well {
   height: 70px;
@@ -54,11 +64,6 @@ body {
   color: #a94442;
 }
 
-.vw-container-header {
-  width: 100%;
-  height: 120px;
-}
-
 .vw-container-header-keyword {
   height: 30px;
   margin-left:30px;
@@ -68,28 +73,99 @@ body {
   /*color: #72848B;*/
 }
 
+
+/*============================container 관련 style*/
+.vw-container {
+  width: 940px;
+  height: 100%;
+  margin: 0px auto;
+  margin-top: 40px;
+}
+/*============================Loading 관련 style*/
+.vw-container-hide {
+  width:100%;
+  height:100%;
+}
+.outer {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+.inner {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+.centered {
+  position: relative;
+  display: inline-block;
+  width: 50%;
+  padding: 1em;
+}
+
+.fading-circle-spinner{
+  width: 100px;
+  height: 100px;
+  margin: 0px auto;
+  margin-top: 20px;
+}
+
+.fading-circle:before {
+  background-color: #F8C34C;
+}
+
+.pulse-spinner{
+  width: 70px;
+  height: 70px;
+  margin: 0px auto;
+  margin-top: 20px;
+  background-color: #F8C34C;
+}
+
+.three-bounce-spinner {
+  width: 100px;
+  height: 100px;
+  margin: 0px auto;
+  margin-top: 50px;
+}
+.three-bounce-spinner > div {
+  width: 18px;
+  height: 18px;
+  background-color: #F8C34C;
+}
+
+
+
+/*============================header 관련 style*/
+.vw-container-header {
+  width: 100%;
+  height: 140px;
+  background-color:#659EA7;
+}
+/*============================sentinemt bar 관련 style*/
+
 .vw-container-sentimentBar {
   height: 90px;
   width: 100%;
   margin-top: 50px;
 }
 
-/*.progress {*/
-  /*background: rgba(245, 245, 245, 1);*/
-  /*border: 0px solid rgba(245, 245, 245, 1);*/
-  /*border-radius: 40px;*/
-  /*height: 75px;*/
-/*}*/
+.progress {
+  background: rgba(245, 245, 245, 1);
+  border: 0px solid rgba(245, 245, 245, 1);
+  border-radius: 40px;
+  height: 75px;
+}
 
-/*.progress span {*/
-  /*width: 100%;*/
-  /*color: black;*/
-  /*font-size: 16px;*/
-/*}*/
+.progress span {
+  width: 100%;
+  color: black;
+  font-size: 16px;
+}
 
-/*.progress-bar {*/
-  /*line-height: 75px;*/
-/*}*/
+.progress-bar {
+  line-height: 75px;
+}
 
 .progress-bar-positive {
   background: #82DCF8;
@@ -104,6 +180,8 @@ body {
 }
 
 
+
+/*============================chart, word table 관련 style*/
 .vw-container-analysis {
 
   height: 350px;
@@ -115,7 +193,6 @@ body {
   height: 350px;
   width: 64%;
   float:left;
-  background-color:#BCDE5C;
 }
 .vw-container-analysis-word {
   padding-left:30px;
@@ -133,22 +210,31 @@ body {
 }
 
 
-
+/*============================sns, nav-pill 관련 style*/
 .vw-container-sns {
   height: 600px;
   width: 100%;
   margin-top: 20px;
 }
 
+.nav {
+  z-index: 9;
+}
+
 .nav-pills > li > a {
   color:black;
 }
 .nav-pills > li.active > a,
-.nav-pills > li.active > a:focus {
+.nav-pills > li.active > a:focus,
+.nav-pills > li.active > a:hover {
   color:black;
   background: #FBD959;
 }
 
+/*============================ng cloak 관련 style*/
+
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
+
+
