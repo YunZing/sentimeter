@@ -13,7 +13,6 @@
 <body ng-app="sentimeter" ng-controller="view">
 <!--FFDC74-->
 <div>
-
     <img src="image/logo.png" width="150">
 
     <div class="input-group">
@@ -54,7 +53,6 @@
                     <th>단어</th>
                     <th>횟수</th>
                     <th>감정</th>
-                    <th>점수</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -62,14 +60,13 @@
                     <td>{{word.word}}</td>
                     <td>{{word.count}}</td>
                     <td>{{word.sentiment}}</td>
-                    <td>{{word.sentiment_score}}</td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
     <div class="vw-container-sns">
-        <h4>게시글</h4>
+        <h4 >게시글</h4>
         <table class="table">
             <thead>
             <tr>
@@ -97,60 +94,24 @@
 <script>
     keyword = "<%= key%>"
     var sentimeter = angular.module("sentimeter", []);
-    var options = {
-        'legend':{
-            hrefs: []
-        },
-        'dataset':{
-            title:'Playing time per day',
-            colorset: ['#82DCF8', '#C6C6C6', "#FE9289"],
-        },
-        'chartDiv' : 'chart18',
-        'chartType' : 'multi_column',
-        'chartSize' : {width:640, height:320}
-    };
 
     sentimeter.controller("view", function ($scope, $http, $filter) {
         var selectedCategory = null;
-        $scope.dataExist = false;
-        $scope.erroralert = false;
         $scope.keyword = keyword;
         $scope.model = {};
+
         $http.get("http://localhost:3000/result/sentimentBar?keyword="+keyword).success(function (data){
             $scope.model.sentiment = data;
-            if(data.totalCount != 0){
-                $scope.dataExist = true;
-            }
-            else {
-                $scope.erroralert = true;
-            }
         });
-        $http.get("http://localhost:3000/result/chart?keyword="+keyword).success(function (data){
-            $scope.model.option = data;
-            options.legend.names = data.legend.names;
-            options.dataset.values = data.dataset.values;
-            options.dataset.fields = data.dataset.fields;
-            options.maxValue = data.maxValue;
-            options.increment = Math.ceil(data.maxValue/12);
-            Nwagon.chart(options);
-        });
+//        $http.get("http://localhost:3000/result/chart?keyword="+keyword).success(function (data){
+//            $scope.model.option = data;
+//        });
         $http.get("http://localhost:3000/result/wordCount?keyword="+keyword).success(function (data){
             $scope.model.word = $filter("limitTo")(data.splice(0), 7);
-        });
-        $http.get("http://localhost:3000/result/search").success(function (data){
-            $scope.model.search = $filter("limitTo")(data.splice(0), 8);
         });
 
         $scope.toggle = function() {
             location.href = "http://localhost:3000/view?keyword=" + $scope.input;
-        };
-
-        $scope.categoryFilterFn = function (article) {
-            return selectedCategory == null || article.sentiment == selectedCategory;
-        };
-
-        $scope.selectCategory = function (newCategory) {
-            selectedCategory = newCategory;
         };
     });
 

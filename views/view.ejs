@@ -1,24 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+    <!--bootstrap-->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
-    <link rel="stylesheet" href="bower_components/Nwagon/Nwagon.css" type="text/css">
-    <link rel="stylesheet" href="bower_components/angular-spinkit/build/angular-spinkit.min.css">
-    <link rel="stylesheet" href="stylesheets/style.css">
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <!--angular and jquery-->
     <script src="bower_components/angular/angular.min.js"></script>
-    <script src="bower_components/Nwagon/Nwagon.js"></script>
+
+    <!--spinkit-->
+    <link rel="stylesheet" href="bower_components/angular-spinkit/build/angular-spinkit.min.css">
     <script src="bower_components/angular-spinkit/build/angular-spinkit.min.js"></script>
+
+    <!--chart(chart.js)-->
+    <script src="bower_components/Chart.js/Chart.min.js"></script>
+    <script src="bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+    <link rel="stylesheet" href="bower_components/angular-chart.js/dist/angular-chart.css"/>
+
+    <!--chart(nwagon)-->
+    <link rel="stylesheet" href="bower_components/Nwagon/Nwagon.css" type="text/css">
+    <script src="bower_components/Nwagon/Nwagon.js"></script>
+
+    <!--style-->
+    <link rel="stylesheet" href="stylesheets/style.css">
+
+
+
 </head>
 <body ng-cloak ng-app="sentimeter" ng-controller="view">
 <!--FFDC74-->
+
 <div id="header">
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand" href="http://localhost:3000/home">
+                <a class="navbar-brand" href="/home">
                     <img src="image/logo.png" width="150">
                 </a>
             </div>
@@ -30,8 +49,8 @@
                                    ng-keyup="$event.keyCode == 13 && toggle()">
 
                             <div class="input-group-btn">
-                                <button class="btn btn-default" ng-click="toggle()" type="submit"><i
-                                            class="glyphicon glyphicon-search"></i></button>
+                                <button class="btn btn-default" ng-click="toggle()" type="submit">
+                                    <i class="glyphicon glyphicon-search"></i></button>
                             </div>
                         </div>
                     </form>
@@ -50,31 +69,36 @@
         <div class="vw-container-header-keyword">
             <h5 style="color:#72848B">많이 검색한 키워드:
                 <small ng-repeat="keyword in model.search">
-                    <a href="http://localhost:3000/view?keyword={{keyword._id}}"
+                    <a href="/view?keyword={{keyword._id}}"
                        style="font-size:12px; padding-left:1em; color:#696969">{{keyword._id}}</a>
                 </small>
             </h5>
         </div>
     </nav>
 </div>
+
+
+<!--<div id="refresher">-->
 <div id="container">
-    <div class="vw-container">
-        <div class="vw-container-hide" ng-show="!(getSentimentBar && getWordCount && getChart)">
-            <div class="outer">
-                <div class="inner">
-                    <div class="centered">
-                        <h3 style="color:#72848B;">감성분석을 하는 중 입니다</h3>
-                        <!--<fading-circle-spinner></fading-circle-spinner>-->
-                        <!--<pulse-spinner></pulse-spinner>-->
-                        <!--<chasing-dots-spinner></chasing-dots-spinner>-->
-                        <three-bounce-spinner></three-bounce-spinner>
-                    </div>
+    <div class="vw-container-hide"
+         ng-class="{ 'vw-container-hide-active' : getSentimentBar && getWordCount && getChart}">
+        <div class="outer">
+            <div class="inner">
+                <div class="centered">
+                    <h3 style="color:#72848B;">감성분석을 하는 중 입니다</h3>
+                    <!--<fading-circle-spinner></fading-circle-spinner>-->
+                    <!--<pulse-spinner></pulse-spinner>-->
+                    <!--<chasing-dots-spinner></chasing-dots-spinner>-->
+                    <three-bounce-spinner></three-bounce-spinner>
                 </div>
             </div>
         </div>
-        <div ng-show="getSentimentBar && getWordCount && getChart && dataExist">
-            <div class="vw-container-header">
-            </div>
+    </div>
+
+    <div class="vw-container" ng-hide="">
+        <div class="vw-container-header">
+        </div>
+        <div class="">
             <div class="vw-container-sentimentBar">
                 <h4><span class="glyphicon glyphicon-ok"></span> 감성분석결과</h4>
 
@@ -82,25 +106,29 @@
                     <div class="progress-bar progress-bar-positive progress-bar-striped" role="progressbar"
                          aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
                          style="width: {{model.sentiment.positive}}%;">
-                        <span>긍정 {{model.sentiment.positive}}%</span>
+                        <span>{{model.sentiment.positive}}%</span>
                     </div>
                     <div class="progress-bar progress-bar-neutral progress-bar-striped" role="progressbar"
                          aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
                          style="width: {{model.sentiment.neutral}}%;">
-                        <span>중립 {{model.sentiment.neutral}}%</span>
+                        <span>{{model.sentiment.neutral}}%</span>
                     </div>
                     <div class="progress-bar progress-bar-negative progress-bar-striped" role="progressbar"
                          aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
                          style="width: {{model.sentiment.negative}}%;">
-                        <span>부정 {{model.sentiment.negative}}%</span>
+                        <span>{{model.sentiment.negative}}%</span>
                     </div>
                 </div>
+
             </div>
             <div class="vw-container-analysis">
                 <div class="vw-container-analysis-chart">
                     <h4><span class="glyphicon glyphicon-stats"></span> 일주일 분포</h4>
-                    <div id="chart18"></div>
+                    <!--<div id="chart18"></div>-->
+                    <canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels"
+                            chart-series="series" chart-options="options" width="601" height="300"></canvas>
                 </div>
+
                 <div class="vw-container-analysis-word">
                     <h4><span class="glyphicon glyphicon-menu-hamburger"></span> 단어</h4>
                     <table class="table">
@@ -121,29 +149,35 @@
             </div>
             <div class="vw-container-sns">
                 <h4><span class="glyphicon glyphicon-search"></span> 게시글</h4>
-                <ul class="nav nav-pills category">
+
+                <ul class="nav nav-pills">
                     <li class="active">
                         <a ng-click="selectCategory()" data-toggle="pill" href="#home">전체
                             <small style="color:#72848B;">{{model.sentiment.totalCount}}</small>
-                        </a></li>
-                    <li>
-                        <a ng-click="selectCategory('긍정')" data-toggle="pill" href="#menu1">긍정
-                            <small style="color:#72848B;">{{model.sentiment.positiveCount}}</small></a>
+                        </a>
                     </li>
                     <li>
-                        <a ng-click="selectCategory('중립')" data-toggle="pill" href="#menu2">중립
-                            <small style="color:#72848B;">{{model.sentiment.neutralCount}}</small></a>
+                        <a ng-click="selectCategory('긍정')" data-toggle="pill" href="#pos">긍정
+                            <small style="color:#72848B;">{{model.sentiment.positiveCount}}</small>
+                        </a>
                     </li>
                     <li>
-                        <a ng-click="selectCategory('부정')" data-toggle="pill" href="#menu3">부정
-                            <small style="color:#72848B;">{{model.sentiment.negativeCount}}</small></a>
+                        <a ng-click="selectCategory('중립')" data-toggle="pill" href="#neu">중립
+                            <small style="color:#72848B;">{{model.sentiment.neutralCount}}</small>
+                        </a>
+                    </li>
+                    <li>
+                        <a ng-click="selectCategory('부정')" data-toggle="pill" href="#neg">부정
+                            <small style="color:#72848B;">{{model.sentiment.negativeCount}}</small>
+                        </a>
                     </li>
                 </ul>
 
                 <div class="tab-content">
                     <div id="home" class="tab-pane fade in active">
                         <ul class="list-group">
-                            <li ng-repeat="article in model.sentiment.text | filter:categoryFilterFn | range:articleSize" class="list-group-item">
+                            <li ng-repeat="article in model.sentiment.text | filter:categoryFilterFn | range:articleSize"
+                                class="list-group-item">
                                 <span style="color:#F17233">{{article.name}}
                                   <small style="color:#72848B">@{{article.scrName}}</small>
                                     <small style="color:#C6C6C6; padding-left:1em;">{{article.date}}</small>
@@ -151,10 +185,11 @@
                                 <br>
                                 <a style="color:#000000;" href="{{article.URL}}">{{article.Text}}</a>
                             </li>
-                            <a href="" ng-show="ShowMoreButton()" ng-click="clickCategory()" class="list-group-item list-group-item-warning" style="text-align: center;">더보기</a>
+                            <a href="" ng-show="ShowMoreButton()" ng-click="clickCategory()"
+                               class="list-group-item list-group-item-warning" style="text-align: center;">더보기</a>
                         </ul>
                     </div>
-                    <div id="menu1" class="tab-pane fade">
+                    <div id="pos" class="tab-pane fade">
                         <ul class="list-group">
                             <li ng-repeat="article in model.sentiment.text | filter:categoryFilterFn | range:articleSize"
                                 class="list-group-item">
@@ -164,10 +199,11 @@
                                 <br>
                                 <a style="color:#000000;" href="{{article.URL}}">{{article.Text}}</a>
                             </li>
-                            <a href="" ng-show="ShowMoreButton()" ng-click="clickCategory()" class="list-group-item list-group-item-warning" style="text-align: center;">더보기</a>
+                            <a href="" ng-show="ShowMoreButton()" ng-click="clickCategory()"
+                               class="list-group-item list-group-item-warning" style="text-align: center;">더보기</a>
                         </ul>
                     </div>
-                    <div id="menu2" class="tab-pane fade">
+                    <div id="neu" class="tab-pane fade">
                         <ul class="list-group">
                             <li ng-repeat="article in model.sentiment.text | filter:categoryFilterFn | range:articleSize"
                                 class="list-group-item">
@@ -177,10 +213,11 @@
                                 <br>
                                 <a style="color:#000000;" href="{{article.URL}}">{{article.Text}}</a>
                             </li>
-                            <a href="" ng-show="ShowMoreButton()" ng-click="clickCategory()" class="list-group-item list-group-item-warning" style="text-align: center;">더보기</a>
+                            <a href="" ng-show="ShowMoreButton()" ng-click="clickCategory()"
+                               class="list-group-item list-group-item-warning" style="text-align: center;">더보기</a>
                         </ul>
                     </div>
-                    <div id="menu3" class="tab-pane fade">
+                    <div id="neg" class="tab-pane fade">
                         <ul class="list-group">
                             <li ng-repeat="article in model.sentiment.text | filter:categoryFilterFn | range:articleSize"
                                 class="list-group-item">
@@ -190,7 +227,8 @@
                                 <br>
                                 <a style="color:#000000;" href="{{article.URL}}">{{article.Text}}</a>
                             </li>
-                            <a href="" ng-show="ShowMoreButton()" ng-click="clickCategory()" class="list-group-item list-group-item-warning" style="text-align: center;">더보기</a>
+                            <a href="" ng-show="ShowMoreButton()" ng-click="clickCategory()"
+                               class="list-group-item list-group-item-warning" style="text-align: center;">더보기</a>
                         </ul>
                     </div>
                 </div>
@@ -202,19 +240,31 @@
 
 <script>
     keyword = "<%= key%>"
-    var sentimeter = angular.module("sentimeter", ['angular-spinkit']);
-    var options = {
-        'legend': {
-            hrefs: []
-        },
-        'dataset': {
-            title: 'Playing time per day',
-            colorset: ['#82DCF8', '#C6C6C6', "#FE9289"],
-        },
-        'chartDiv': 'chart18',
-        'chartType': 'multi_column',
-        'chartSize': {width: 640, height: 320}
-    };
+    var sentimeter = angular.module("sentimeter", ['angular-spinkit', 'chart.js']);
+    //    var options = {
+    //        'legend': {
+    //            hrefs: []
+    //        },
+    //        'dataset': {
+    //            title: 'Playing time per day',
+    //            colorset: ['#82DCF8', '#C6C6C6', "#FE9289"],
+    //        },
+    //        'chartDiv': 'chart18',
+    //        'chartType': 'multi_column',
+    //        'chartSize': {width: 640, height: 320}
+    //    };
+    sentimeter.config(['ChartJsProvider', function (ChartJsProvider) {
+        // Configure all charts
+        ChartJsProvider.setOptions({
+            colours: ['#82DCF8', '#C6C6C6', '#FE9289'],
+            responsive: false
+        });
+        // Configure all line charts
+        ChartJsProvider.setOptions('Line', {
+            datasetFill: false
+        });
+    }])
+
     sentimeter.constant("articleListPageCount", 7);
 
     sentimeter.filter("range", function ($filter) {
@@ -232,8 +282,7 @@
         }
     });
 
-
-    sentimeter.controller("view", function ($scope, $http, $filter, articleListPageCount) {
+    sentimeter.controller("view", function ($scope, $http, $filter, $timeout, $interval, articleListPageCount) {
         var selectedCategory = null;
         $scope.model = {};
 
@@ -248,7 +297,14 @@
         $scope.articleSize = 7;
 
 
-        $http.get("http://localhost:3000/result/sentimentBar?keyword=" + keyword).success(function (data) {
+        $scope.height = document.body.cilentHeight;
+
+        $scope.labels = ["", "", "", "", "", "", ""];
+        $scope.series = ["긍정", "중립", "부정"];
+        $scope.data = [[], [], []];
+
+
+        $http.get("/result/sentimentBar?keyword=" + keyword).success(function (data) {
             $scope.model.sentiment = data;
             if (data.totalCount != 0) {
                 $scope.dataExist = true;
@@ -258,30 +314,27 @@
             }
             $scope.getSentimentBar = true;
         });
-        $http.get("http://localhost:3000/result/chart?keyword=" + keyword).success(function (data) {
-            $scope.model.option = data;
-            options.legend.names = data.legend.names;
-            options.dataset.values = data.dataset.values;
-            options.dataset.fields = data.dataset.fields;
-            options.maxValue = data.maxValue;
-            options.increment = Math.ceil(data.maxValue / 12);
-            Nwagon.chart(options);
+        $http.get("/result/chart?keyword=" + keyword).success(function (data) {
+            console.log(data);
+            $scope.model.chartmake = data;
+            $scope.data = $scope.model.chartmake.chartdata;
+            $scope.labels = $scope.model.chartmake.chartlabels;
+            $scope.series = $scope.model.chartmake.chartseries;
             $scope.getChart = true;
         });
-        $http.get("http://localhost:3000/result/wordCount?keyword=" + keyword).success(function (data) {
+        $http.get("/result/wordCount?keyword=" + keyword).success(function (data) {
             $scope.model.word = $filter("limitTo")(data.splice(0), 7);
             $scope.getWordCount = true;
         });
-        $http.get("http://localhost:3000/result/search").success(function (data) {
+        $http.get("/result/search").success(function (data) {
             $scope.model.search = $filter("limitTo")(data.splice(0), 10);
+
         });
-
-
 
         $scope.$on('angular-spinkit:imageLoaded');
 
         $scope.toggle = function () {
-            location.href = "http://localhost:3000/view?keyword=" + $scope.input;
+            location.href = "/view?keyword=" + $scope.input;
         };
 
         $scope.categoryFilterFn = function (article) {
@@ -298,13 +351,13 @@
         }
 
         $scope.ShowMoreButton = function () {
-            if(selectedCategory == '긍정') {
+            if (selectedCategory == '긍정') {
                 return $scope.articleSize < $scope.model.sentiment.positiveCount;
             }
-            else if(selectedCategory == '중립') {
+            else if (selectedCategory == '중립') {
                 return $scope.articleSize < $scope.model.sentiment.neutralCount;
             }
-            else if(selectedCategory == '부정') {
+            else if (selectedCategory == '부정') {
                 return $scope.articleSize < $scope.model.sentiment.negativeCount;
             }
             else {

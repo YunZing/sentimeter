@@ -1,8 +1,12 @@
 /* http://www.colourlovers.com/palette/1411751/Gowalla_Warm
  F17233 F5A54A F8C34C FBD959 BCDE5C
+ 82DCF8 C6C6C6  FE9289
  */
+
+
 html,body{
-  height:100%
+  height:100%;
+  width:100%
 }
 body{
   display:table;
@@ -17,6 +21,31 @@ body{
   display:table-row;
   width:100%;
   height:100%;
+}
+
+.container {
+  width: 70%;
+  height: 70%;
+  margin: 40px auto;
+  background: red;
+}
+
+.outer {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+.inner {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+.centered {
+  position: relative;
+  display: inline-block;
+
+  width: 50%;
+  padding: 1em;
 }
 
 
@@ -36,9 +65,14 @@ body{
   margin-top: 20px;
   height: 50px;
 }
+
 .searchBox {
   width: 500px;
   margin: 0 auto;
+}
+
+.searchButton {
+  border:4px solid #FFBE40
 }
 
 /*============================navbar well 관련 style*/
@@ -73,7 +107,6 @@ body{
   /*color: #72848B;*/
 }
 
-
 /*============================container 관련 style*/
 .vw-container {
   width: 940px;
@@ -84,24 +117,15 @@ body{
 /*============================Loading 관련 style*/
 .vw-container-hide {
   width:100%;
-  height:100%;
+  height: 100vh;
+  -webkit-transition: height 0.5s ease-in-out;
+  transition: height 0.5s ease-in-out;
 }
-.outer {
-  display: table;
-  width: 100%;
-  height: 100%;
+.vw-container-hide-active {
+  height:0;
 }
-.inner {
-  display: table-cell;
-  vertical-align: middle;
-  text-align: center;
-}
-.centered {
-  position: relative;
-  display: inline-block;
-  width: 50%;
-  padding: 1em;
-}
+
+
 
 .fading-circle-spinner{
   width: 100px;
@@ -139,15 +163,13 @@ body{
 /*============================header 관련 style*/
 .vw-container-header {
   width: 100%;
-  height: 140px;
-  background-color:#659EA7;
+  height: 180px;
 }
 /*============================sentinemt bar 관련 style*/
 
 .vw-container-sentimentBar {
-  height: 90px;
+  height: 110px;
   width: 100%;
-  margin-top: 50px;
 }
 
 .progress {
@@ -183,7 +205,6 @@ body{
 
 /*============================chart, word table 관련 style*/
 .vw-container-analysis {
-
   height: 350px;
   width: 100%;
   margin-top: 60px;
@@ -236,5 +257,6 @@ body{
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
+
 
 

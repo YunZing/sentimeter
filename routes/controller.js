@@ -22,6 +22,7 @@ router.get('/view', function (req, res, next) {
     }
 });
 
+
 router.get('/result/search', function (req, res, next) {
     var now = new Date();
     var condition = new Date(now.valueOf() - (3*60*60*1000));
@@ -94,21 +95,22 @@ router.get('/result/chart', function (req, res, next) {
             }
         ],
         function(err, results){
-            var options={
-                'legend': {
-                    names:[],
-                    hrefs:[]
-                },
-                'dataset': {
-                    values: [],
-                    fields:["긍정","중립","부정"]
-                },
-                'maxValue': 0,
-                'increment': 1
+
+            //$scope.labels = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
+            //$scope.series = ['Series A', 'Series B', 'Series C'];
+            //
+            //$scope.data = [
+            //    [65, 59, 80, 81, 56, 55, 40],
+            //    [28, 48, 40, 19, 86, 27, 90],
+            //    [34, 21, 60, 31, 25, 90, 32]
+            //];
+            var options = {
+                chartlabels : [],
+                chartseries : ["긍정", "중립", "부정"],
+                chartdata : [[],[],[]]
             }
             var count = 0;
             var num = 7;
-            var max = 0;
             results.forEach( function(result) {
                 //날짜
                 count++;
@@ -117,24 +119,14 @@ router.get('/result/chart', function (req, res, next) {
                 if(dd<10) { dd='0'+dd }
                 if(mm<10) { mm='0'+mm }
                 var str = mm+'-'+dd;
-                options.legend.names.push(str);
+                options.chartlabels.push(str);
                 //값
 
-                var arr=[];
-                arr.push(result.positive);
-                arr.push(result.neutral);
-                arr.push(result.negative);
-                if(max < result.positive) { max = result.positive; }
-                if(max < result.neutral) { max = result.neutral; }
-                if(max < result.negative) { max = result.negative; }
-                options.dataset.values.push(arr);
+                options.chartdata[0].push(result.positive);
+                options.chartdata[1].push(result.neutral);
+                options.chartdata[2].push(result.negative);
 
                 if(count==num) {
-                    if(max<11)
-                        max = 10;
-
-                    options.maxValue = max;
-
                     res.json(options);
                 }
 
@@ -382,6 +374,7 @@ function convertDateToString(date) {
     mm=mm.toString();
     yyyy=yyyy.toString();
     var result = yyyy+mm+dd;
+
     return result;
 }
 
