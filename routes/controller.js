@@ -105,12 +105,14 @@ router.get('/result/chart', function (req, res, next) {
             //    [34, 21, 60, 31, 25, 90, 32]
             //];
             var options = {
-                chartlabels : [],
-                chartseries : ["긍정", "중립", "부정"],
-                chartdata : [[],[],[]]
+                names : [],
+                fields : ["긍정", "중립", "부정"],
+                dataset : [],
+                max : 0
             }
             var count = 0;
             var num = 7;
+            var max = 10;
             results.forEach( function(result) {
                 //날짜
                 count++;
@@ -119,13 +121,20 @@ router.get('/result/chart', function (req, res, next) {
                 if(dd<10) { dd='0'+dd }
                 if(mm<10) { mm='0'+mm }
                 var str = mm+'-'+dd;
-                options.chartlabels.push(str);
+                options.names.push(str);
                 //값
 
-                options.chartdata[0].push(result.positive);
-                options.chartdata[1].push(result.neutral);
-                options.chartdata[2].push(result.negative);
+                var datavalues = [];
+                datavalues.push(result.positive);
+                datavalues.push(result.neutral);
+                datavalues.push(result.negative);
+                var arrmax = Math.max.apply(Math, datavalues);
+                if(max < arrmax) {
+                    max = arrmax;
+                }
 
+                options.dataset.push(datavalues);
+                options.max = max;
                 if(count==num) {
                     res.json(options);
                 }
@@ -162,7 +171,6 @@ router.get('/result/wordCount', function (req, res, next) {
         async.parallel([
             function (callback) {
                 docs.forEach(function (doc) {
-
                     docCount++;
                     var vCount = 0;
                     var vNum = 0;
@@ -192,48 +200,53 @@ router.get('/result/wordCount', function (req, res, next) {
             }
         ], function(err, result) {
             var arr = [];
-            var count = 0;
-            var num = Object.keys(result[0]).length;
-            for (var prop in result[0]) {
-                if (wordObject.hasOwnProperty(prop)) {
-                    model_senti.get_sentiment_by_word(prop, function(err, sentiData) {
-                        count++;
-                        if(!(sentiData[0] == "[]" || sentiData[0] == null || sentiData[0] == undefined)) {
-                            if (sentiData[0].sentiment == "긍정" || sentiData[0].sentiment == "부정" ||
-                                (sentiData[0].sentiment == "중립" && sentiData[0].sentiment_score != "0%")) {
-                                var sentiment;
-                                var styleScope;
-                                var sentimentScore = (parseFloat((sentiData[0].sentiment_score).split("%")[0]) / 100).toFixed(2);
-                                if (!(sentiData[0].sentiment == "중립" && sentimentScore <= 0.5)) {
-                                    if (sentiData[0].sentiment == "긍정") {
-                                        sentiment = "positive";
-                                        styleScope = "background: rgba(130, 220, 248, " + sentimentScore + ");";
+            if(Object.keys(result[0]).length == 0){
+                res.send(arr);
+            }
+            else {
+                var count = 0;
+                var num = Object.keys(result[0]).length;
+                for (var prop in result[0]) {
+                    if (wordObject.hasOwnProperty(prop)) {
+                        model_senti.get_sentiment_by_word(prop, function (err, sentiData) {
+                            count++;
+                            if (!(sentiData[0] == "[]" || sentiData[0] == null || sentiData[0] == undefined)) {
+                                if (sentiData[0].sentiment == "긍정" || sentiData[0].sentiment == "부정" ||
+                                    (sentiData[0].sentiment == "중립" && sentiData[0].sentiment_score != "0%")) {
+                                    var sentiment;
+                                    var styleScope;
+                                    var sentimentScore = (parseFloat((sentiData[0].sentiment_score).split("%")[0]) / 100).toFixed(2);
+                                    if (!(sentiData[0].sentiment == "중립" && sentimentScore <= 0.5)) {
+                                        if (sentiData[0].sentiment == "긍정") {
+                                            sentiment = "positive";
+                                            styleScope = "background: rgba(130, 220, 248, " + sentimentScore + ");";
+                                        }
+                                        if (sentiData[0].sentiment == "중립") {
+                                            sentiment = "neutral";
+                                            styleScope = "background: rgba(198, 198, 198, " + sentimentScore + ");";
+                                        }
+                                        if (sentiData[0].sentiment == "부정") {
+                                            sentiment = "negative";
+                                            styleScope = "background: rgba(254, 146, 137, " + sentimentScore + ");";
+                                        }
+                                        arr.push({
+                                            "word": sentiData[0].word,
+                                            "count": wordObject[sentiData[0].word],
+                                            "sentiment": sentiment,
+                                            "sentiment_score": sentimentScore,
+                                            "style": styleScope
+                                        });
                                     }
-                                    if (sentiData[0].sentiment == "중립") {
-                                        sentiment = "neutral";
-                                        styleScope = "background: rgba(198, 198, 198, " + sentimentScore + ");";
-                                    }
-                                    if (sentiData[0].sentiment == "부정") {
-                                        sentiment = "negative";
-                                        styleScope = "background: rgba(254, 146, 137, " + sentimentScore + ");";
-                                    }
-                                    arr.push({
-                                        "word": sentiData[0].word,
-                                        "count": wordObject[sentiData[0].word],
-                                        "sentiment": sentiment,
-                                        "sentiment_score": sentimentScore,
-                                        "style": styleScope
+                                }
+                                if (num == count) {
+                                    arr.sort(function (a, b) {
+                                        return b.count - a.count;
                                     });
+                                    res.send(arr);
                                 }
                             }
-                            if (num == count) {
-                                arr.sort(function (a, b) {
-                                    return b.count - a.count;
-                                });
-                                res.send(arr);
-                            }
-                        }
-                    });
+                        });
+                    }
                 }
             }
         });
@@ -349,7 +362,7 @@ router.get('/result/sentimentBar', function (req, res, next) {
         result.positive = (result.positiveCount * 100 / (result.positiveCount + result.negativeCount + result.neutralCount)).toFixed(2);
         result.negative = (result.negativeCount * 100 / (result.positiveCount + result.negativeCount + result.neutralCount)).toFixed(2);
         result.neutral = (100-result.positive-result.negative).toFixed(2);
-        if(result.totalCount != 0) {
+        if(result.totalCount != 0 && result.keyword != 'undefined') {
             model_search.set_log_by_word(keyword, function(err, result) {
                 if(err)
                     console.log(err);

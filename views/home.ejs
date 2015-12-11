@@ -9,7 +9,7 @@
     <script src="bower_components/angular/angular.min.js"></script>
 
 </head>
-<body ng-app="home" ng-controller="home">
+<body ng-cloak ng-app="home" ng-controller="home">
 
 <div id="header">
 </div>
@@ -21,20 +21,25 @@
                     <div class="hm-container-logo">
                         <img src="image/logo.png" width="500">
                     </div>
-                    <div class="hm-container-search">
+                    <div class="hm-container-search" style="width:500px">
                         <div class="input-group">
-                            <input type="text" class="form-control searchButton" ng-model="keyword" ng-keyup="$event.keyCode == 13 && toggle()" placeholder="키워드를 입력하세요" >
-                            <div class="input-group-btn">
-                                <button type="submit" class="btn btn-warning" ng-click="toggle()">
-                                    <span class="glyphicon glyphicon-search"></span>
-                                </button>
+                            <input class="hmSearchInput" type="text" class="form-control" placeholder="키워드로 감성을 확인해보세요!"
+                                   ng-model="input"
+                                   ng-keyup="$event.keyCode == 13 && toggle()">
+                            <div class="input-group-btn" style="width:50px; height:50px; margin-bottom: 10px">
+                                <button class="btn searchBtn" ng-click="toggle()" type="submit">
+                                    <i style="color:#FFFFFF;" class="glyphicon glyphicon-search"></i></button>
                             </div>
                         </div>
                     </div>
                     <div style="text-align: left">
                         <h4 style="color:#72848B;">많이 검색한 키워드:
-                            <small ng-repeat="keyword in model.search">
-                                <a href="/view?keyword={{keyword._id}}" style="font-size:12px; padding-left:1em; color:#696969">{{keyword._id}}</a>
+                            <small ng-repeat="keyword in model.search" ng-show="getSearch">
+                                <a href="/view?keyword={{keyword._id}}"
+                                   style="font-size:12px; padding-left:1em; color:#696969; font-family:NanumBarunGothic;">{{keyword._id}}</a>
+                            </small>
+                            <small style="font-size:12px; padding-left:1em; color:#C6C6C6; font-family:NanumBarunGothic;" ng-hide="getSearch">
+                                많이 검색한 키워드를 불러오는 중입니다 ㅇㅅㅇ</a>
                             </small>
                         </h4>
                     </div>
@@ -47,9 +52,11 @@
     var app = angular.module("home", []);
     app.controller('home', function($scope, $http, $filter) {
         $scope.model = {};
+        $scope.getSearch = false;
 
         $http.get("/result/search").success(function (data){
-            $scope.model.search = $filter("limitTo")(data.splice(0), 7);
+            $scope.model.search = $filter("limitTo")(data.splice(0), 6);
+            $scope.getSearch = true;
         });
 
         $scope.toggle = function() {
