@@ -26,11 +26,36 @@
                         <i style="color:#FFFFFF;" class="glyphicon glyphicon-search"></i></button>
                 </div>
             </div>
-            <div>
-                {{model.sentiment.text}} : {{model.sentiment.word}}
-                <br>명사: {{model.sentiment.noun}}
-                <br>동사: {{model.sentiment.verb}}
-            </div>
+            <h3 ng-show="getResult">
+                <span style="color:#72848B;"> {{model.sentiment.text}} </span>
+                <br>
+                <br>
+                <span style="color:#F5A54A;"> 결과 : {{model.sentiment.word}}</span>
+                <br>
+                <br>
+                <table class="table">
+                    <thead>
+                    <th>긍정</th>
+                    </thead>
+                    <tbody>
+                    <tr class="info" ng-repeat="word in model.sentiment.positive">
+                        <td>{{word.word}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <br>
+                <table class="table">
+                    <thead>
+                    <th>부정</th>
+                    </thead>
+                    <tbody>
+                    <tr class="danger" ng-repeat="word in model.sentiment.negative">
+                        <td>{{word.word}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <br>
+            </h3>
         </div>
     </div>
 
@@ -59,7 +84,6 @@
                 console.log(status);
             })
         }
-
     })
 </script>
 

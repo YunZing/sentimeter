@@ -42,7 +42,7 @@
                 </a>
                 <input class="searchInput" type="text" class="form-control" placeholder="다른 키워드로 감성을 확인해보세요!"
                        ng-model="input"
-                       ng-keyup="$event.keyCode == 13 && toggle()">
+                       ng-keydown="$event.keyCode == 13 && toggle()">
                 <div class="input-group-btn" style="width:50px; height:50px;">
                     <button class="btn searchBtn" ng-click="toggle()" type="submit">
                         <i style="color:#FFFFFF;" class="glyphicon glyphicon-search"></i></button>
@@ -122,15 +122,15 @@
                              style="width: {{model.sentiment.positive}}%;">
                             <span>{{model.sentiment.positive}}%</span>
                         </div>
-                        <div class="progress-bar progress-bar-neutral progress-bar-striped" role="progressbar"
-                             aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
-                             style="width: {{model.sentiment.neutral}}%;">
-                            <span>{{model.sentiment.neutral}}%</span>
-                        </div>
                         <div class="progress-bar progress-bar-negative progress-bar-striped" role="progressbar"
                              aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
                              style="width: {{model.sentiment.negative}}%;">
                             <span>{{model.sentiment.negative}}%</span>
+                        </div>
+                        <div class="progress-bar progress-bar-neutral progress-bar-striped" role="progressbar"
+                             aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                             style="width: {{model.sentiment.neutral}}%;">
+                            <span>{{model.sentiment.neutral}}%</span>
                         </div>
                     </div>
 
@@ -176,13 +176,13 @@
                             </a>
                         </li>
                         <li>
-                            <a ng-click="selectCategory('중립')" data-toggle="pill" href="#neu">중립
-                                <small style="color:#72848B;">{{model.sentiment.neutralCount}}</small>
+                            <a ng-click="selectCategory('부정')" data-toggle="pill" href="#neg">부정
+                                <small style="color:#72848B;">{{model.sentiment.negativeCount}}</small>
                             </a>
                         </li>
                         <li>
-                            <a ng-click="selectCategory('부정')" data-toggle="pill" href="#neg">부정
-                                <small style="color:#72848B;">{{model.sentiment.negativeCount}}</small>
+                            <a ng-click="selectCategory('중립')" data-toggle="pill" href="#neu">중립
+                                <small style="color:#72848B;">{{model.sentiment.neutralCount}}</small>
                             </a>
                         </li>
                     </ul>
@@ -286,7 +286,7 @@
         }
     });
 
-    sentimeter.controller("view", function ($scope, $http, $filter, $timeout, $interval, articleListPageCount) {
+    sentimeter.controller("view", function ($scope, $http, $filter, $window) {
         var selectedCategory = null;
         $scope.options = {
             'legend': {
@@ -296,13 +296,14 @@
             'dataset': {
                 title: '날짜별 감성 분석',
                 values: [],
-                colorset: ['#82DCF8', '#C6C6C6', "#FE9289"],
+                colorset: ['#82DCF8', "#FE9289", '#C6C6C6'],
                 fields: []
             },
             'chartDiv': 'sentiment',
             'chartType': 'multi_column',
             'chartSize': {width: 600, height: 300},
-            'increment': 0
+            'increment': 0,
+            'maxValue' : 0
         };
         $scope.model = {};
 
@@ -337,6 +338,7 @@
             $scope.options.dataset.values = data.dataset;
             $scope.options.dataset.fields = data.fields;
             $scope.options.increment = Math.ceil(data.max / 12);
+            $scope.options.maxValue = (data.max>=7 ? data.max : 6);
             Nwagon.chart($scope.options);
 
 
@@ -353,7 +355,13 @@
         $scope.$on('angular-spinkit:imageLoaded');
 
         $scope.toggle = function () {
-            location.href = "/view?keyword=" + $scope.input;
+            console.log("눌림");
+            var key = $scope.input;
+            if(key.length < 2) {
+                $window.alert("두글자 이상 입력하세요");
+                return;
+            }
+            location.href = "/view?keyword=" + key;
         };
 
         $scope.categoryFilterFn = function (article) {
@@ -370,6 +378,10 @@
         }
 
         $scope.ShowMoreButton = function () {
+            if ($scope.model.sentiment === undefined) {
+                return;
+            }
+
             if (selectedCategory == '긍정') {
                 return $scope.articleSize < $scope.model.sentiment.positiveCount;
             }

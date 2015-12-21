@@ -19,6 +19,9 @@ router.get('/home', function (req, res, next) {
 
 router.get('/view', function (req, res, next) {
     var keyword = req.query.keyword;
+    if(keyword.length < 2) {
+        res.status(400).send("키워드를 2글자 이상 입력해주세요");
+    }
     if (keyword !== undefined) {
         res.render('view', {key: keyword});
     }
@@ -111,7 +114,7 @@ router.get('/result/chart', function (req, res, next) {
             //];
             var options = {
                 names: [],
-                fields: ["긍정", "중립", "부정"],
+                fields: ["긍정", "부정", "중립"],
                 dataset: [],
                 max: 0
             }
@@ -135,8 +138,8 @@ router.get('/result/chart', function (req, res, next) {
 
                 var datavalues = [];
                 datavalues.push(result.positive);
-                datavalues.push(result.neutral);
                 datavalues.push(result.negative);
+                datavalues.push(result.neutral);
                 var arrmax = Math.max.apply(Math, datavalues);
                 if (max < arrmax) {
                     max = arrmax;
@@ -476,7 +479,7 @@ router.post('/input/analysis', function (req, res, next) {
         "count": 0
     };
     var client = new net.Socket();
-    client.connect(5000, '127.0.0.1', function () {
+    client.connect(7000, '127.0.0.1', function () {
         var str = text + "\n";
         client.write(str);
     });

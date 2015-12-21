@@ -9,12 +9,16 @@ var model_senti = require('../models/sentiment.js');
 
 exports.analysis = function (doc, apiInfo, next) {
     var api_key = ["qkdrnqjtjt20151014201843", "ryuenuse20151016185510", "breaksung20151203205351", "castlebin1220151203231034"];
+    var positive = [];
+    var negative = [];
+    var neutral = [];
     async.parallel({
         //동, 명사에 대해서 수행
         word: function (callback_second) {
             //var sent = 0;
             //0높중개, 높중스, 2낮중개, 낮중스, 4높긍개, 높긍스, 8낮긍개, 낮긍스, 10높부개, 높부스, 12낮부개, 낮부스
             var sent = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
             var nv;
             if ((doc.Verb == null || doc.Verb == "[]" || doc.Verb.length == 0) && (doc.Noun == null || doc.Noun == "[]" || doc.Noun.length == 0)) {
                 callback_second(null, "없음");
@@ -70,9 +74,11 @@ exports.analysis = function (doc, apiInfo, next) {
                                     if (sentiData[0].sentiment == "중립" && sentiScore > 60) {
                                         sent[0] += 1;
                                         sent[1] += sentiScore;
+                                        neutral.push(word);
                                     } else if (sentiData[0].sentiment == "중립" && sentiScore <= 60 && sentiScore > 0) {
                                         sent[2] += 1;
                                         sent[3] += sentiScore;
+                                        neutral.push(sentiData[0]);
                                     } else if (sentiData[0].sentiment == "긍정" && (isNeg == undefined || isNeg == "false") && sentiScore > 20) {
                                         sent[4] += 1;
                                         //if(word.hasOwnProperty('end')) {
@@ -81,6 +87,7 @@ exports.analysis = function (doc, apiInfo, next) {
                                         //    sent[5] += sentiScore;
                                         //}
                                         sent[5] += sentiScore;
+                                        positive.push(sentiData[0]);
                                     } else if (sentiData[0].sentiment == "부정" && isNeg == "true" && sentiScore > 20) {
                                         sent[4] += 1;
                                         //if(word.hasOwnProperty('end')) {
@@ -89,6 +96,7 @@ exports.analysis = function (doc, apiInfo, next) {
                                         //    sent[5] += sentiScore;
                                         //}
                                         sent[5] += sentiScore;
+                                        positive.push(sentiData[0]);
                                     } else if (sentiData[0].sentiment == "긍정" && (isNeg == undefined || isNeg == "false") && sentiScore <= 20) {
                                         sent[6] += 1;
                                         //if(word.hasOwnProperty('end')) {
@@ -97,6 +105,7 @@ exports.analysis = function (doc, apiInfo, next) {
                                         //    sent[7] += sentiScore;
                                         //}
                                         sent[7] += sentiScore;
+                                        positive.push(sentiData[0]);
                                     } else if (sentiData[0].sentiment == "부정" && isNeg == "true" && sentiScore <= 20) {
                                         sent[6] += 1;
                                         //if(word.hasOwnProperty('end')) {
@@ -105,6 +114,7 @@ exports.analysis = function (doc, apiInfo, next) {
                                         //    sent[7] += sentiScore;
                                         //}
                                         sent[7] += sentiScore;
+                                        positive.push(sentiData[0]);
                                     } else if (sentiData[0].sentiment == "부정" && (isNeg == undefined || isNeg == "false") && sentiScore > 20) {
                                         sent[8] += 1;
                                         //if(word.hasOwnProperty('end')) {
@@ -113,6 +123,7 @@ exports.analysis = function (doc, apiInfo, next) {
                                         //    sent[9] += sentiScore;
                                         //}
                                         sent[9] += sentiScore;
+                                        negative.push(sentiData[0]);
                                     } else if (sentiData[0].sentiment == "긍정" && isNeg == "true" && sentiScore > 20) {
                                         sent[8] += 1;
                                         //if(word.hasOwnProperty('end')) {
@@ -121,6 +132,7 @@ exports.analysis = function (doc, apiInfo, next) {
                                         //    sent[9] += sentiScore;
                                         //}
                                         sent[9] += sentiScore;
+                                        negative.push(sentiData[0]);
                                     } else if (sentiData[0].sentiment == "부정" && (isNeg == undefined || isNeg == "false") && sentiScore <= 20) {
                                         sent[10] += 1;
                                         //if(word.hasOwnProperty('end')) {
@@ -129,6 +141,7 @@ exports.analysis = function (doc, apiInfo, next) {
                                         //    sent[11] += sentiScore;
                                         //}
                                         sent[11] += sentiScore;
+                                        negative.push(sentiData[0]);
                                     } else if (sentiData[0].sentiment == "긍정" && isNeg == "true" && sentiScore <= 20) {
                                         sent[10] += 1;
                                         //if(word.hasOwnProperty('end')) {
@@ -137,6 +150,7 @@ exports.analysis = function (doc, apiInfo, next) {
                                         //    sent[11] += sentiScore;
                                         //}
                                         sent[11] += sentiScore;
+                                        negative.push(sentiData[0]);
                                     } else {
                                         sent[0] += 0;
                                     }
@@ -145,6 +159,7 @@ exports.analysis = function (doc, apiInfo, next) {
                             }
                         ], function (err, result) {
                             Count++;
+
                             if (Count == Num) {
                                 var sentiment;
                                 //0높중개, 높중스, 2낮중개, 낮중스, 4높긍개, 높긍스, 6낮긍개, 낮긍스, 8높부개, 높부스, 10낮부개, 낮부스
@@ -166,10 +181,23 @@ exports.analysis = function (doc, apiInfo, next) {
                                         } else if (result[4] + result[6] < result[8] + result[10]) {
                                             sentiment = "부정"
                                         } else {
-                                            sentiment = "중립"
+                                            sentiment = "중립";
+                                            if(!(doc.Imoticon == null  || doc.Imoticon == undefined || doc.Imoticon == "[]" || doc.Imoticon.length == 0)) {
+                                                var emolength = doc.Imoticon.length;
+                                                if(doc.Imoticon[0].word == "ㅠㅠ" || doc.Imoticon[0].word == "ㅠㅠㅠ") {
+                                                    sentiment = "부정";
+                                                    if(emolength >= 2) {
+                                                        sentiment = "긍정";
+                                                    }
+                                                } else {
+                                                    sentiment = "긍정";
+                                                }
+                                            }
+
                                         }
                                     }
                                 }
+
 
                                 //if (result > 0) {
                                 //    sentiment = "긍정";
@@ -190,6 +218,10 @@ exports.analysis = function (doc, apiInfo, next) {
         result.text = doc.text;
         result.noun = doc.Noun;
         result.verb = doc.Verb;
+        result.emoticon = doc.Emoticon;
+        result.positive = positive;
+        result.negative = negative;
+        result.neutral = neutral;
         next(result);
     })
 }

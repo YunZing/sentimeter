@@ -24,8 +24,8 @@
                     <div class="hm-container-search" style="width:500px">
                         <div class="input-group">
                             <input class="hmSearchInput" type="text" class="form-control" placeholder="키워드로 감성을 확인해보세요!"
-                                   ng-model="keyword" ng-required = "true" ng-minlength = "2"
-                                   ng-keyup="$event.keyCode == 13 && toggle()">
+                                   ng-model="keyword"
+                                   ng-keydown="$event.keyCode == 13 && toggle()">
                             <div class="input-group-btn" style="width:50px; height:50px; margin-bottom: 10px">
                                 <button class="btn searchBtn" ng-click="toggle()" type="submit">
                                     <i style="color:#FFFFFF;" class="glyphicon glyphicon-search"></i></button>
@@ -50,7 +50,7 @@
 </div>
 <script>
     var app = angular.module("home", []);
-    app.controller('home', function($scope, $http, $filter) {
+    app.controller('home', function($scope, $http, $filter, $window) {
         $scope.model = {};
         $scope.getSearch = false;
 
@@ -60,7 +60,12 @@
         });
 
         $scope.toggle = function() {
-            location.href = "/view?keyword=" + $scope.keyword;
+            var key = $scope.keyword;
+            if(key.length < 2) {
+                $window.alert("두글자 이상 입력하세요");
+                return;
+            }
+            location.href = "/view?keyword=" + key;
         }
 
     })

@@ -40,7 +40,7 @@ exports.get_sns_list_by_word_and_date = function (word, strdate, callback) {
 //sentiment가 null인 snsData(아직 감성분석을 하지 않은 데이터)만 전송
 exports.get_sns_list = function (callback) {
     var db = dbcon.getDb();
-    db.collection('SNS_Data').find({"sentiment":{"$eq" : null}}).limit(300).toArray(
+    db.collection('SNS_Data').find({"sentiment":{"$eq" : null}}).limit(500).toArray(
         function (err, docs) {
             callback(err, docs);
         });
