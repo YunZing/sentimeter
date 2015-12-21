@@ -31,9 +31,9 @@ router.get('/test', function (req, res, next) {
 
 router.get('/result/search', function (req, res, next) {
     var now = new Date();
-    var condition = new Date(now.valueOf() - (3*60*60*1000));
-    model_search.get_log(condition, function(err, docs) {
-        if(err) {
+    var condition = new Date(now.valueOf() - (3 * 60 * 60 * 1000));
+    model_search.get_log(condition, function (err, docs) {
+        if (err) {
             console.log(err);
         }
         res.send(docs);
@@ -57,49 +57,49 @@ router.get('/result/chart', function (req, res, next) {
     var keyword = req.query.keyword;
     var today = new Date();
     async.parallel([
-            function(callback) {
-                var date = new Date(today.valueOf() - 6*(24*60*60*1000));
-                getSentimentResults(keyword, convertDateToString(date), function(result) {
+            function (callback) {
+                var date = new Date(today.valueOf() - 6 * (24 * 60 * 60 * 1000));
+                getSentimentResults(keyword, convertDateToString(date), function (result) {
                     callback(null, result);
                 });
             },
-            function(callback) {
-                var date = new Date(today.valueOf() - 5*(24*60*60*1000));
-                getSentimentResults(keyword, convertDateToString(date), function(result) {
+            function (callback) {
+                var date = new Date(today.valueOf() - 5 * (24 * 60 * 60 * 1000));
+                getSentimentResults(keyword, convertDateToString(date), function (result) {
                     callback(null, result);
                 });
             },
-            function(callback) {
-                var date = new Date(today.valueOf() - 4*(24*60*60*1000));
-                getSentimentResults(keyword, convertDateToString(date), function(result) {
+            function (callback) {
+                var date = new Date(today.valueOf() - 4 * (24 * 60 * 60 * 1000));
+                getSentimentResults(keyword, convertDateToString(date), function (result) {
                     callback(null, result);
                 });
             },
-            function(callback) {
-                var date = new Date(today.valueOf() - 3*(24*60*60*1000));
-                getSentimentResults(keyword, convertDateToString(date), function(result) {
+            function (callback) {
+                var date = new Date(today.valueOf() - 3 * (24 * 60 * 60 * 1000));
+                getSentimentResults(keyword, convertDateToString(date), function (result) {
                     callback(null, result);
                 });
             },
-            function(callback) {
-                var date = new Date(today.valueOf() - 2*(24*60*60*1000));
-                getSentimentResults(keyword, convertDateToString(date), function(result) {
+            function (callback) {
+                var date = new Date(today.valueOf() - 2 * (24 * 60 * 60 * 1000));
+                getSentimentResults(keyword, convertDateToString(date), function (result) {
                     callback(null, result);
                 });
             },
-            function(callback) {
-                var date = new Date(today.valueOf() - (24*60*60*1000));
-                getSentimentResults(keyword, convertDateToString(date), function(result) {
+            function (callback) {
+                var date = new Date(today.valueOf() - (24 * 60 * 60 * 1000));
+                getSentimentResults(keyword, convertDateToString(date), function (result) {
                     callback(null, result);
                 });
             },
-            function(callback) {
-                getSentimentResults(keyword, convertDateToString(today), function(result) {
+            function (callback) {
+                getSentimentResults(keyword, convertDateToString(today), function (result) {
                     callback(null, result);
                 });
             }
         ],
-        function(err, results){
+        function (err, results) {
 
             //$scope.labels = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
             //$scope.series = ['Series A', 'Series B', 'Series C'];
@@ -110,22 +110,26 @@ router.get('/result/chart', function (req, res, next) {
             //    [34, 21, 60, 31, 25, 90, 32]
             //];
             var options = {
-                names : [],
-                fields : ["긍정", "중립", "부정"],
-                dataset : [],
-                max : 0
+                names: [],
+                fields: ["긍정", "중립", "부정"],
+                dataset: [],
+                max: 0
             }
             var count = 0;
             var num = 7;
             var max = 10;
-            results.forEach( function(result) {
+            results.forEach(function (result) {
                 //날짜
                 count++;
                 var dd = (result.date.getDate()).toString();
-                var mm = (result.date.getMonth()+1).toString(); //January is 0!
-                if(dd<10) { dd='0'+dd }
-                if(mm<10) { mm='0'+mm }
-                var str = mm+'-'+dd;
+                var mm = (result.date.getMonth() + 1).toString(); //January is 0!
+                if (dd < 10) {
+                    dd = '0' + dd
+                }
+                if (mm < 10) {
+                    mm = '0' + mm
+                }
+                var str = mm + '-' + dd;
                 options.names.push(str);
                 //값
 
@@ -134,13 +138,13 @@ router.get('/result/chart', function (req, res, next) {
                 datavalues.push(result.neutral);
                 datavalues.push(result.negative);
                 var arrmax = Math.max.apply(Math, datavalues);
-                if(max < arrmax) {
+                if (max < arrmax) {
                     max = arrmax;
                 }
 
                 options.dataset.push(datavalues);
                 options.max = max;
-                if(count==num) {
+                if (count == num) {
                     res.json(options);
                 }
 
@@ -168,7 +172,7 @@ router.get('/result/wordCount', function (req, res, next) {
 
     //keyword가 포함된 doc array가져오기
     model_sns.get_sns_list_by_word(keyword, function (err, docs) {
-        if(docs.length==0 || docs == "[]" || docs == null || docs == undefined) {
+        if (docs.length == 0 || docs == "[]" || docs == null || docs == undefined) {
             res.send("[]");
         }
         docNum = docs.length;
@@ -203,9 +207,9 @@ router.get('/result/wordCount', function (req, res, next) {
                     }
                 });
             }
-        ], function(err, result) {
+        ], function (err, result) {
             var arr = [];
-            if(Object.keys(result[0]).length == 0){
+            if (Object.keys(result[0]).length == 0) {
                 res.send(arr);
             }
             else {
@@ -221,19 +225,9 @@ router.get('/result/wordCount', function (req, res, next) {
                                     var sentiment;
                                     var styleScope;
                                     var sentimentScore = (parseFloat((sentiData[0].sentiment_score).split("%")[0]) / 100).toFixed(2);
-                                    if (!(sentiData[0].sentiment == "중립" && sentimentScore <= 0.5)) {
-                                        if (sentiData[0].sentiment == "긍정") {
-                                            sentiment = "positive";
-                                            styleScope = "background: rgba(130, 220, 248, " + sentimentScore + ");";
-                                        }
-                                        if (sentiData[0].sentiment == "중립") {
-                                            sentiment = "neutral";
-                                            styleScope = "background: rgba(198, 198, 198, " + sentimentScore + ");";
-                                        }
-                                        if (sentiData[0].sentiment == "부정") {
-                                            sentiment = "negative";
-                                            styleScope = "background: rgba(254, 146, 137, " + sentimentScore + ");";
-                                        }
+                                    if (sentiData[0].sentiment == "긍정"  && sentimentScore >= 0.2) {
+                                        sentiment = "positive";
+                                        styleScope = "background: rgba(130, 220, 248, " + sentimentScore + ");";
                                         arr.push({
                                             "word": sentiData[0].word,
                                             "count": wordObject[sentiData[0].word],
@@ -242,7 +236,31 @@ router.get('/result/wordCount', function (req, res, next) {
                                             "style": styleScope
                                         });
                                     }
+                                    if (sentiData[0].sentiment == "중립" && sentimentScore >= 0.6) {
+                                        sentiment = "neutral";
+                                        styleScope = "background: rgba(198, 198, 198, " + sentimentScore + ");";
+                                        arr.push({
+                                            "word": sentiData[0].word,
+                                            "count": wordObject[sentiData[0].word],
+                                            "sentiment": sentiment,
+                                            "sentiment_score": sentimentScore,
+                                            "style": styleScope
+                                        });
+                                    }
+                                    if (sentiData[0].sentiment == "부정" && sentimentScore >= 0.2) {
+                                        sentiment = "negative";
+                                        styleScope = "background: rgba(254, 146, 137, " + sentimentScore + ");";
+                                        arr.push({
+                                            "word": sentiData[0].word,
+                                            "count": wordObject[sentiData[0].word],
+                                            "sentiment": sentiment,
+                                            "sentiment_score": sentimentScore,
+                                            "style": styleScope
+                                        });
+                                    }
+
                                 }
+
                                 if (num == count) {
                                     arr.sort(function (a, b) {
                                         return b.count - a.count;
@@ -331,7 +349,7 @@ router.get('/result/sentimentBar', function (req, res, next) {
                             textJson.sentiment = doc.sentiment;
                             textJson.date = convertStringToDateView(doc.Time);
 
-                            if(doc.sentiment == "긍정" || doc.sentiment == "부정" || doc.sentiment == "중립") {
+                            if (doc.sentiment == "긍정" || doc.sentiment == "부정" || doc.sentiment == "중립") {
                                 docsJson.text.push(textJson);
                             }
                             //if (doc.sentiment == "긍정") {
@@ -346,7 +364,7 @@ router.get('/result/sentimentBar', function (req, res, next) {
                     }, function (err, result) {
                         //sentiment 결정
                         docCount++;
-                        if(result.word != "없음") {
+                        if (result.word != "없음") {
                             docsJson.totalCount++;
                         }
                         if (result.word == "긍정") {
@@ -366,10 +384,10 @@ router.get('/result/sentimentBar', function (req, res, next) {
     ], function (err, result) {
         result.positive = (result.positiveCount * 100 / (result.positiveCount + result.negativeCount + result.neutralCount)).toFixed(2);
         result.negative = (result.negativeCount * 100 / (result.positiveCount + result.negativeCount + result.neutralCount)).toFixed(2);
-        result.neutral = (100-result.positive-result.negative).toFixed(2);
-        if(result.totalCount != 0 && result.keyword != 'undefined') {
-            model_search.set_log_by_word(keyword, function(err, result) {
-                if(err)
+        result.neutral = (100 - result.positive - result.negative).toFixed(2);
+        if (result.totalCount != 0 && result.keyword != 'undefined') {
+            model_search.set_log_by_word(keyword, function (err, result) {
+                if (err)
                     console.log(err);
             });
         }
@@ -380,44 +398,44 @@ router.get('/result/sentimentBar', function (req, res, next) {
 
 function convertDateToString(date) {
     var dd = date.getDate();
-    var mm = date.getMonth()+1; //January is 0!
+    var mm = date.getMonth() + 1; //January is 0!
     var yyyy = date.getFullYear();
-    if(dd<10) {
-        dd='0'+dd
+    if (dd < 10) {
+        dd = '0' + dd
     }
-    if(mm<10) {
-        mm='0'+mm
+    if (mm < 10) {
+        mm = '0' + mm
     }
-    dd=dd.toString();
-    mm=mm.toString();
-    yyyy=yyyy.toString();
-    var result = yyyy+mm+dd;
+    dd = dd.toString();
+    mm = mm.toString();
+    yyyy = yyyy.toString();
+    var result = yyyy + mm + dd;
 
     return result;
 }
 
 function convertStringToDateView(str) {
-    var mm = str.substr(4,2);
-    var dd = str.substr(6,2);
-    var hh = str.substr(8,2);
-    var min = str.substr(10,2);
-    var result = mm+'/'+dd+' '+hh+':'+min;
+    var mm = str.substr(4, 2);
+    var dd = str.substr(6, 2);
+    var hh = str.substr(8, 2);
+    var min = str.substr(10, 2);
+    var result = mm + '/' + dd + ' ' + hh + ':' + min;
     return result;
 }
 
 function convertStringToDate(str) {
-    if(!/^(\d){8}$/.test(str)) return "invalid date";
-    var yyyy = str.substr(0,4) ;
-    var mm = str.substr(4,2)-1;
-    var dd = str.substr(6,2);
-    return new Date(yyyy,mm,dd);
+    if (!/^(\d){8}$/.test(str)) return "invalid date";
+    var yyyy = str.substr(0, 4);
+    var mm = str.substr(4, 2) - 1;
+    var dd = str.substr(6, 2);
+    return new Date(yyyy, mm, dd);
 }
 
-var getSentimentResults = function(keyword, dateStr, callback) {
+var getSentimentResults = function (keyword, dateStr, callback) {
     var date = convertStringToDate(dateStr);
     var docNum = 0;
     var docCount = 0;
-    var result={
+    var result = {
         keyword: keyword,
         date: date,
         positive: 0,
@@ -442,7 +460,7 @@ var getSentimentResults = function(keyword, dateStr, callback) {
                 } else if (doc.sentiment == "중립") {
                     result.neutral++;
                 }
-                if(docNum == docCount){
+                if (docNum == docCount) {
                     callback(result);
                 }
             });
@@ -458,18 +476,18 @@ router.post('/input/analysis', function (req, res, next) {
         "count": 0
     };
     var client = new net.Socket();
-    client.connect(5000, '127.0.0.1', function() {
-        var str = text+"\n";
+    client.connect(5000, '127.0.0.1', function () {
+        var str = text + "\n";
         client.write(str);
     });
 
-    client.on('data', function(data) {
+    client.on('data', function (data) {
 
         console.log(data.toString());
         var jsonstr = JSON.parse(data.toString());
-        setTimeout( function() {
+        setTimeout(function () {
             jsonstr.text = text;
-            controller_senti.analysis(jsonstr, apiInfo, function(result) {
+            controller_senti.analysis(jsonstr, apiInfo, function (result) {
                 console.log(result);
                 res.send(result);
             });
@@ -480,7 +498,7 @@ router.post('/input/analysis', function (req, res, next) {
 
     });
 
-    client.on('close', function() {
+    client.on('close', function () {
         console.log('Connection closed');
     });
 });
