@@ -60,6 +60,8 @@ exports.get_sentiment_from_api_and_save = function (api_key, word, callback) {
         var jsonbody = JSON.parse(body);
         console.log("데이터 있을경우");
         console.log(jsonbody);
+        jsonbody.sentiment_score = (parseFloat((jsonbody.sentiment_score).split("%")[0]) / 2).toString() + "%";
+
         if (jsonbody.error == undefined) {
             db.collection('sentiment').insertOne({
                     "word": jsonbody.word,

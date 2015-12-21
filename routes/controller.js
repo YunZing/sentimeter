@@ -5,9 +5,11 @@ var express = require('express');
 var model_sns = require('../models/sns.js');
 var model_senti = require('../models/sentiment.js');
 var model_search = require('../models/searchlog.js');
+var controller_senti = require('../controllers/sentiment.js');
 var http = require('http');
 var urlencode = require('urlencode');
 var async = require('async');
+var net = require('net');
 
 var router = express.Router();
 /* GET home page. */
@@ -22,6 +24,10 @@ router.get('/view', function (req, res, next) {
     }
 });
 
+router.get('/test', function (req, res, next) {
+    res.render('test');
+});
+
 
 router.get('/result/search', function (req, res, next) {
     var now = new Date();
@@ -33,7 +39,6 @@ router.get('/result/search', function (req, res, next) {
         res.send(docs);
     });
 });
-
 
 router.get('/result/chart', function (req, res, next) {
     /*
@@ -444,5 +449,40 @@ var getSentimentResults = function(keyword, dateStr, callback) {
         }
     });
 }
+
+
+router.post('/input/analysis', function (req, res, next) {
+    var text = req.body.text;
+    var apiInfo = {
+        "index": 3,
+        "count": 0
+    };
+    var client = new net.Socket();
+    client.connect(5000, '127.0.0.1', function() {
+        var str = text+"\n";
+        client.write(str);
+    });
+
+    client.on('data', function(data) {
+
+        console.log(data.toString());
+        var jsonstr = JSON.parse(data.toString());
+        setTimeout( function() {
+            jsonstr.text = text;
+            controller_senti.analysis(jsonstr, apiInfo, function(result) {
+                console.log(result);
+                res.send(result);
+            });
+
+            client.destroy(); // kill client after server's response
+        }, 2 * 1000);
+
+
+    });
+
+    client.on('close', function() {
+        console.log('Connection closed');
+    });
+});
 
 module.exports = router;

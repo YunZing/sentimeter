@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <script src="bower_components/angular/angular.min.js"></script>
+</head>
+<body ng-cloak ng-app="test" ng-controller="test">
+
+<div id="header">
+</div>
+<div id="container">
+
+    <div class="searchBox" style="padding-bottom: 150px">
+        <div class="hm-container-search" style="width:500px">
+            <div class="input-group">
+                <input class="hmSearchInput" type="text" class="form-control" placeholder="문장을 입력하세요"
+                       ng-model="querytext"
+                       ng-keyup="$event.keyCode == 13 && toggle()">
+
+                <div class="input-group-btn" style="width:50px; height:50px; margin-bottom: 10px">
+                    <button class="btn searchBtn" ng-click="toggle()" type="submit">
+                        <i style="color:#FFFFFF;" class="glyphicon glyphicon-search"></i></button>
+                </div>
+            </div>
+            <div>
+                {{model.sentiment.text}} : {{model.sentiment.word}}
+                <br>명사: {{model.sentiment.noun}}
+                <br>동사: {{model.sentiment.verb}}
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    var app = angular.module("test", []);
+    app.controller('test', function ($scope, $http, $filter) {
+        $scope.model = {};
+        $scope.getResult = false;
+        $scope.data = "";
+
+        $scope.toggle = function () {
+            $http({
+                method: 'POST',
+                url: '/input/analysis',
+                data: {
+                    "text": $scope.querytext
+                },
+                headers: {'Content-Type': 'application/json; charset=utf-8'}
+            }).success(function(data, status, headers, config) {
+                if(data) {
+                    $scope.model.sentiment = data;
+                    $scope.getResult = true;
+                }
+            }).error(function(data, status, headers, config) {
+                console.log(status);
+            })
+        }
+
+    })
+</script>
+
+</body>
+</html>
